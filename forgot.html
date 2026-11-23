@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password | Bekar Naki? 🧲</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Bekar <span>Naki?</span> 🧲</a>
+    <div class="nav-links">
+      <a href="login.html">← Back to Login</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card" style="max-width: 440px; margin: 4rem auto;">
+      
+      <div style="text-align:center; margin-bottom:1.8rem;">
+        <h2 style="font-size:1.8rem; margin-bottom:0.4rem;">Forgot Password? 🔑</h2>
+        <p style="color:var(--text-muted); margin:0;">Enter your registered email to receive a password reset link</p>
+      </div>
+
+      <form id="forgot-form">
+        <label>Registered Email Address</label>
+        <input type="email" id="reset-email" placeholder="e.g. student@university.edu" required />
+
+        <button type="submit" id="reset-btn" class="btn btn-green" style="width:100%;">Send Reset Link →</button>
+      </form>
+
+      <div style="text-align:center; margin-top:1.5rem;">
+        <a href="login.html" style="color:var(--text-muted); font-size:0.9rem; text-decoration:none;">
+          ← Remembered password? Back to Login
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Firebase Connection -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
+      authDomain: "bekar-naki.firebaseapp.com",
+      projectId: "bekar-naki",
+      storageBucket: "bekar-naki.firebasestorage.app",
+      messagingSenderId: "720723215856",
+      appId: "1:720723215856:web:7deb0f660050f140720935",
+      measurementId: "G-1VVJZHJ9NM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('reset-btn');
+      btn.innerText = "Sending Link...";
+      btn.disabled = true;
+
+      const email = document.getElementById('reset-email').value.trim();
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        alert("✅ Password reset link sent! Check your email inbox (and Spam folder).");
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("❌ Error: " + error.message);
+        btn.innerText = "Send Reset Link →";
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard & Auto CV | Bekar Naki? 🧲</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Photo Upload & Classic Black CV Layout */
+    .cv-top-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .cv-photo-box {
+      width: 105px;
+      height: 115px;
+      border-radius: 4px;
+      object-fit: cover;
+      border: 1.5px solid #000000;
+      display: none;
+    }
+
+    /* Classic Monochrome CV Overrides */
+    #cv-paper, #cv-paper * {
+      color: #000000 !important;
+    }
+    #cv-paper .cv-section h4 {
+      color: #000000 !important;
+      border-bottom: 1.5px solid #000000 !important;
+      font-weight: 800;
+    }
+    #cv-paper .badge {
+      background: #f1f5f9 !important;
+      color: #000000 !important;
+      border: 1px solid #000000 !important;
+      border-radius: 4px;
+    }
+    #cv-paper .badge.verified {
+      background: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #000000 !important;
+    }
+
+    /* Academic Table inside CV */
+    .cv-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+    }
+    .cv-table th, .cv-table td {
+      border: 1px solid #000000;
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+      color: #000000 !important;
+    }
+    .cv-table th {
+      background-color: #f1f5f9;
+      font-weight: 700;
+    }
+
+    /* Form Sub-headings */
+    .form-divider {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #c084fc;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.3rem;
+      margin: 1.4rem 0 0.9rem;
+    }
+    .edu-block {
+      background: rgba(9, 5, 20, 0.5);
+      border: 1px solid var(--border);
+      padding: 0.9rem;
+      border-radius: 10px;
+      margin-bottom: 0.9rem;
+    }
+    .edu-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .edu-row input {
+      margin-bottom: 0.4rem;
+      padding: 0.55rem 0.7rem;
+      font-size: 0.88rem;
+    }
+
+    /* Clean PDF Print (No Browser Header/Footer) */
+    @page {
+      size: A4;
+      margin: 0mm;
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        margin: 0;
+        padding: 0;
+      }
+      header, .no-print {
+        display: none !important;
+      }
+      .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .grid-2 {
+        display: block !important;
+      }
+      #cv-paper {
+        position: static !important;
+        width: 100% !important;
+        min-height: 297mm;
+        padding: 16mm 18mm !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="no-print">
+    <a href="index.html" class="logo">Bekar <span>Naki?</span> 🧲</a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="active">CV Builder</a>
+      <a href="arena.html">Skill Arena 🎮</a>
+      <button id="logout-btn" class="btn btn-danger">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="no-print" style="margin-bottom: 1.5rem;">
+      <h2 style="margin:0;">Welcome, <span id="welcome-name" class="gradient-text">Developer</span>! 👋</h2>
+      <p style="color:var(--text-muted); margin:0.3rem 0 0;">Edit any information below—your professional CV updates live on the right.</p>
+    </div>
+
+    <div class="grid-2">
+      
+      <!-- LEFT: EDITABLE CV INPUT FORM -->
+      <div class="card no-print" style="max-height: 85vh; overflow-y: auto;">
+        <h3 style="margin-bottom:0.2rem;">1. Edit Your CV Details</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0;">All fields including Name & Email are editable anytime.</p>
+
+        <!-- Personal Info & Photo -->
+        <div class="form-divider">Personal Info & Photo</div>
+        <label>Upload Profile Photo (Optional)</label>
+        <input type="file" id="inp-photo" accept="image/*" style="padding:0.45rem;" />
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+          <div>
+            <label>Full Name (Shown on CV)</label>
+            <input type="text" id="inp-name" placeholder="Your Full Name" />
+          </div>
+          <div>
+            <label>CV Contact Email</label>
+            <input type="email" id="inp-email" placeholder="your.email@example.com" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+          <div>
+            <label>Phone Number</label>
+            <input type="text" id="inp-phone" placeholder="+880 1XXX-XXXXXX" />
+          </div>
+          <div>
+            <label>Present Address</label>
+            <input type="text" id="inp-address" placeholder="Dhaka, Bangladesh" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+          <div>
+            <label>Current Status</label>
+            <select id="inp-status">
+              <option value="Undergraduate Student">Undergraduate Student</option>
+              <option value="Fresh Graduate">Fresh Graduate</option>
+              <option value="Job Seeker">Job Seeker</option>
+            </select>
+          </div>
+          <div>
+            <label>Target / Dream Job Role</label>
+            <select id="inp-dreamjob">
+              <option value="Frontend Web Developer">Frontend Web Developer</option>
+              <option value="Backend PHP / Node Developer">Backend PHP / Node Developer</option>
+              <option value="Full-Stack Software Engineer">Full-Stack Software Engineer</option>
+              <option value="Software Engineer (C / Java)">Software Engineer (C / Java)</option>
+              <option value="IT Executive / Junior Analyst">IT Executive / Junior Analyst</option>
+            </select>
+          </div>
+        </div>
+
+        <label>GitHub / LinkedIn / Portfolio Link</label>
+        <input type="text" id="inp-links" placeholder="github.com/username | linkedin.com/in/username" />
+
+        <label>Career Objective / Summary</label>
+        <textarea id="inp-summary" rows="2" placeholder="Dedicated CS undergraduate seeking a challenging role to apply problem-solving and software development skills..."></textarea>
+
+        <!-- Dynamic Academic Qualifications -->
+        <div class="form-divider">Academic Qualifications</div>
+        <label>Highest Education Level</label>
+        <select id="inp-edu-level" onchange="toggleEduFields()">
+          <option value="university">Undergraduate / Graduate (University + College + School)</option>
+          <option value="college">College Student / HSC Passed (College + School)</option>
+          <option value="school">School Student / SSC Passed (School Only)</option>
+        </select>
+
+        <!-- University Block -->
+        <div class="edu-block" id="block-uni">
+          <label style="color:#e9d5ff;">🎓 University / Honours / B.Sc.</label>
+          <input type="text" id="uni-name" placeholder="University Name (e.g. East West University)" />
+          <div class="edu-row">
+            <input type="text" id="uni-dept" placeholder="Subject (e.g. B.Sc. in CSE)" />
+            <input type="text" id="uni-cgpa" placeholder="CGPA (e.g. 3.75/4.00)" />
+            <input type="text" id="uni-year" placeholder="Year (2026)" />
+          </div>
+        </div>
+
+        <!-- College Block -->
+        <div class="edu-block" id="block-col">
+          <label style="color:#e9d5ff;">🏫 College (HSC / A-Levels / Diploma)</label>
+          <input type="text" id="col-name" placeholder="College Name (e.g. Notre Dame College)" />
+          <div class="edu-row">
+            <input type="text" id="col-group" placeholder="Group (e.g. Science)" />
+            <input type="text" id="col-gpa" placeholder="GPA (e.g. 5.00/5.00)" />
+            <input type="text" id="col-year" placeholder="Year (2022)" />
+          </div>
+        </div>
+
+        <!-- School Block -->
+        <div class="edu-block" id="block-sch">
+          <label style="color:#e9d5ff;">🎒 School (SSC / O-Levels)</label>
+          <input type="text" id="sch-name" placeholder="School Name (e.g. Ideal School & College)" />
+          <div class="edu-row">
+            <input type="text" id="sch-group" placeholder="Group (e.g. Science)" />
+            <input type="text" id="sch-gpa" placeholder="GPA (e.g. 5.00/5.00)" />
+            <input type="text" id="sch-year" placeholder="Year (2020)" />
+          </div>
+        </div>
+
+        <!-- Skills, Projects & Extras -->
+        <div class="form-divider">Skills, Experience & Achievements</div>
+        
+        <label>Technical & Soft Skills (Comma separated)</label>
+        <input type="text" id="inp-skills" placeholder="HTML, CSS, JavaScript, C, Java, PHP, Problem Solving" />
+
+        <label>Key Projects</label>
+        <textarea id="inp-projects" rows="3" placeholder="• Bekar Naki? - Gamified Skill & CV Web Application&#10;• IoT Health Monitoring System using ESP32"></textarea>
+
+        <label>Experience / Internship / Leadership (Optional)</label>
+        <textarea id="inp-exp" rows="2" placeholder="• Executive Member, University Computer Club (2025 - Present)&#10;• Private Academic Tutor (2024 - Present)"></textarea>
+
+        <label>Certifications & Achievements (Optional)</label>
+        <textarea id="inp-certs" rows="2" placeholder="• 2nd Runner-up, Intra-University Hackathon 2025&#10;• Web Development Bootcamp Certificate"></textarea>
+
+        <label>Languages Known</label>
+        <input type="text" id="inp-lang" placeholder="Bengali (Native), English (Fluent)" />
+
+        <button id="save-cv-btn" class="btn" style="width:100%; margin-top:0.5rem;">Save & Update CV ✨</button>
+      </div>
+
+      <!-- RIGHT: LIVE PROFESSIONAL CV PREVIEW -->
+      <div>
+        <div class="no-print" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+          <h3 style="margin:0;">2. Live A4 CV Preview</h3>
+          <button class="btn btn-green" onclick="window.print()">Download Clean PDF ⬇️</button>
+        </div>
+
+        <div id="cv-paper">
+          <!-- Header with Optional Photo -->
+          <div class="cv-top-flex">
+            <div>
+              <h1 id="cv-name" style="margin:0; font-size:1.85rem; color:#1e1b4b;">Your Name</h1>
+              <div id="cv-target-title" style="font-weight:700; color:#6d28d9; font-size:0.95rem; margin-top:0.15rem;">Frontend Web Developer</div>
+              <div id="cv-contact" style="color:#334155; font-size:0.84rem; margin-top:0.35rem;">email@example.com | Phone | Address</div>
+              <div id="cv-links-display" style="color:#4c1d95; font-size:0.82rem; font-weight:600; margin-top:0.2rem;"></div>
+            </div>
+            <img id="cv-photo-preview" class="cv-photo-box" alt="Profile Photo" />
+          </div>
+
+          <!-- Career Summary -->
+          <div class="cv-section">
+            <h4>Career Objective</h4>
+            <p id="cv-summary" style="margin:0; font-size:0.88rem; color:#1e293b;">
+              Motivated student eager to apply technical skills and grow in a professional environment.
+            </p>
+          </div>
+
+          <!-- Academic Qualifications Table -->
+          <div class="cv-section">
+            <h4>Academic Qualifications</h4>
+            <table class="cv-table">
+              <thead>
+                <tr>
+                  <th>Degree / Exam</th>
+                  <th>Institution</th>
+                  <th>Group / Dept.</th>
+                  <th>Result</th>
+                  <th>Year</th>
+                </tr>
+              </thead>
+              <tbody id="cv-edu-tbody">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Skills & Verified Arena Badge -->
+          <div class="cv-section">
+            <h4>Skills & Verified Competency</h4>
+            <div id="cv-skills-list"></div>
+          </div>
+
+          <!-- Projects -->
+          <div class="cv-section">
+            <h4>Key Projects</h4>
+            <p id="cv-projects" style="margin:0; font-size:0.88rem; white-space: pre-line; color:#1e293b;">Projects list...</p>
+          </div>
+
+          <!-- Experience (Hidden if empty) -->
+          <div class="cv-section" id="sec-exp" style="display:none;">
+            <h4>Experience & Activities</h4>
+            <p id="cv-exp" style="margin:0; font-size:0.88rem; white-space: pre-line; color:#1e293b;"></p>
+          </div>
+
+          <!-- Certifications (Hidden if empty) -->
+          <div class="cv-section" id="sec-certs" style="display:none;">
+            <h4>Achievements & Certifications</h4>
+            <p id="cv-certs" style="margin:0; font-size:0.88rem; white-space: pre-line; color:#1e293b;"></p>
+          </div>
+
+          <!-- Languages -->
+          <div class="cv-section" style="margin-bottom:0;">
+            <h4>Languages</h4>
+            <p id="cv-lang" style="margin:0; font-size:0.88rem; color:#1e293b;">Bengali (Native), English (Professional)</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Firebase Connection & CV Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
+      authDomain: "bekar-naki.firebaseapp.com",
+      projectId: "bekar-naki",
+      storageBucket: "bekar-naki.firebasestorage.app",
+      messagingSenderId: "720723215856",
+      appId: "1:720723215856:web:7deb0f660050f140720935",
+      measurementId: "G-1VVJZHJ9NM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUid = null;
+    let userData = {};
+
+    window.toggleEduFields = function() {
+      const level = document.getElementById('inp-edu-level').value;
+      document.getElementById('block-uni').style.display = (level === 'university') ? 'block' : 'none';
+      document.getElementById('block-col').style.display = (level === 'university' || level === 'college') ? 'block' : 'none';
+      document.getElementById('block-sch').style.display = 'block';
+    };
+
+    document.getElementById('inp-photo').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        userData.photoData = event.target.result;
+        const img = document.getElementById('cv-photo-preview');
+        img.src = userData.photoData;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      currentUid = user.uid;
+      const docSnap = await getDoc(doc(db, "users", currentUid));
+      if (docSnap.exists()) {
+        userData = docSnap.data();
+        populateForm();
+      }
+    });
+
+    function populateForm() {
+      document.getElementById('welcome-name').innerText = userData.name || "Developer";
+      
+      // Editable Name, Email & Status
+      document.getElementById('inp-name').value = userData.name || "";
+      document.getElementById('inp-email').value = userData.email || "";
+      document.getElementById('inp-status').value = userData.status || "Undergraduate Student";
+
+      document.getElementById('inp-phone').value = userData.phone || "";
+      document.getElementById('inp-address').value = userData.address || "";
+      document.getElementById('inp-links').value = userData.links || "";
+      document.getElementById('inp-dreamjob').value = userData.dreamJob || "Frontend Web Developer";
+      document.getElementById('inp-summary').value = userData.summary || "";
+
+      // Education fields
+      document.getElementById('inp-edu-level').value = userData.eduLevel || "university";
+      toggleEduFields();
+
+      document.getElementById('uni-name').value = userData.uniName || "";
+      document.getElementById('uni-dept').value = userData.uniDept || "";
+      document.getElementById('uni-cgpa').value = userData.uniCgpa || "";
+      document.getElementById('uni-year').value = userData.uniYear || "";
+
+      document.getElementById('col-name').value = userData.colName || "";
+      document.getElementById('col-group').value = userData.colGroup || "";
+      document.getElementById('col-gpa').value = userData.colGpa || "";
+      document.getElementById('col-year').value = userData.colYear || "";
+
+      document.getElementById('sch-name').value = userData.schName || "";
+      document.getElementById('sch-group').value = userData.schGroup || "";
+      document.getElementById('sch-gpa').value = userData.schGpa || "";
+      document.getElementById('sch-year').value = userData.schYear || "";
+
+      // Other fields
+      document.getElementById('inp-skills').value = (userData.skills || []).join(", ");
+      document.getElementById('inp-projects').value = userData.projects || "";
+      document.getElementById('inp-exp').value = userData.exp || "";
+      document.getElementById('inp-certs').value = userData.certs || "";
+      document.getElementById('inp-lang').value = userData.lang || "Bengali (Native), English (Fluent)";
+
+      if (userData.photoData) {
+        const img = document.getElementById('cv-photo-preview');
+        img.src = userData.photoData;
+        img.style.display = 'block';
+      }
+
+      renderCV();
+    }
+
+    function renderCV() {
+      document.getElementById('welcome-name').innerText = userData.name || "Developer";
+      document.getElementById('cv-name').innerText = userData.name || "Your Name";
+      document.getElementById('cv-target-title').innerText = `${userData.dreamJob || "Frontend Web Developer"} • ${userData.status || ""}`;
+      document.getElementById('cv-contact').innerText = `${userData.email} | ${userData.phone || 'Phone N/A'} | ${userData.address || 'Bangladesh'}`;
+      document.getElementById('cv-links-display').innerText = userData.links || "";
+      document.getElementById('cv-summary').innerText = userData.summary || "Motivated candidate eager to apply technical skills and solve real-world problems.";
+
+      // Render Education Table Rows
+      const tbody = document.getElementById('cv-edu-tbody');
+      tbody.innerHTML = "";
+      const lvl = userData.eduLevel || "university";
+
+      if (lvl === 'university' && (userData.uniName || userData.uniDept)) {
+        tbody.innerHTML += `<tr>
+          <td><strong>University</strong></td>
+          <td>${userData.uniName || '-'}</td>
+          <td>${userData.uniDept || '-'}</td>
+          <td>${userData.uniCgpa || '-'}</td>
+          <td>${userData.uniYear || '-'}</td>
+        </tr>`;
+      }
+      if ((lvl === 'university' || lvl === 'college') && (userData.colName || userData.colGpa)) {
+        tbody.innerHTML += `<tr>
+          <td><strong>HSC / College</strong></td>
+          <td>${userData.colName || '-'}</td>
+          <td>${userData.colGroup || '-'}</td>
+          <td>${userData.colGpa || '-'}</td>
+          <td>${userData.colYear || '-'}</td>
+        </tr>`;
+      }
+      if (userData.schName || userData.schGpa) {
+        tbody.innerHTML += `<tr>
+          <td><strong>SSC / School</strong></td>
+          <td>${userData.schName || '-'}</td>
+          <td>${userData.schGroup || '-'}</td>
+          <td>${userData.schGpa || '-'}</td>
+          <td>${userData.schYear || '-'}</td>
+        </tr>`;
+      }
+      if (tbody.innerHTML === "") {
+        tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b; text-align:center;">Fill in your academic details on the left to display here.</td></tr>`;
+      }
+
+      // Render Skills + Verified Badge
+      const skillsContainer = document.getElementById('cv-skills-list');
+      skillsContainer.innerHTML = "";
+      (userData.skills || []).forEach(skill => {
+        skillsContainer.innerHTML += `<span class="badge">${skill}</span>`;
+      });
+      if (userData.level && userData.level > 0) {
+        skillsContainer.innerHTML += `<span class="badge verified">✓ Verified Arena Level: ${userData.level}/100</span>`;
+      }
+
+      // Projects, Experience, Certifications, Languages
+      document.getElementById('cv-projects').innerText = userData.projects || "• Academic & Personal Software Projects";
+      
+      const expSec = document.getElementById('sec-exp');
+      if (userData.exp && userData.exp.trim() !== "") {
+        expSec.style.display = "block";
+        document.getElementById('cv-exp').innerText = userData.exp;
+      } else {
+        expSec.style.display = "none";
+      }
+
+      const certSec = document.getElementById('sec-certs');
+      if (userData.certs && userData.certs.trim() !== "") {
+        certSec.style.display = "block";
+        document.getElementById('cv-certs').innerText = userData.certs;
+      } else {
+        certSec.style.display = "none";
+      }
+
+      document.getElementById('cv-lang').innerText = userData.lang || "Bengali (Native), English (Fluent)";
+    }
+
+    // Save Everything to Firestore
+    document.getElementById('save-cv-btn').addEventListener('click', async () => {
+      if (!currentUid) return;
+      const btn = document.getElementById('save-cv-btn');
+      btn.innerText = "Saving CV...";
+      btn.disabled = true;
+
+      userData.name = document.getElementById('inp-name').value.trim();
+      userData.email = document.getElementById('inp-email').value.trim();
+      userData.status = document.getElementById('inp-status').value;
+
+      userData.phone = document.getElementById('inp-phone').value.trim();
+      userData.address = document.getElementById('inp-address').value.trim();
+      userData.links = document.getElementById('inp-links').value.trim();
+      userData.dreamJob = document.getElementById('inp-dreamjob').value;
+      userData.summary = document.getElementById('inp-summary').value.trim();
+
+      userData.eduLevel = document.getElementById('inp-edu-level').value;
+      userData.uniName = document.getElementById('uni-name').value.trim();
+      userData.uniDept = document.getElementById('uni-dept').value.trim();
+      userData.uniCgpa = document.getElementById('uni-cgpa').value.trim();
+      userData.uniYear = document.getElementById('uni-year').value.trim();
+
+      userData.colName = document.getElementById('col-name').value.trim();
+      userData.colGroup = document.getElementById('col-group').value.trim();
+      userData.colGpa = document.getElementById('col-gpa').value.trim();
+      userData.colYear = document.getElementById('col-year').value.trim();
+
+      userData.schName = document.getElementById('sch-name').value.trim();
+      userData.schGroup = document.getElementById('sch-group').value.trim();
+      userData.schGpa = document.getElementById('sch-gpa').value.trim();
+      userData.schYear = document.getElementById('sch-year').value.trim();
+
+      userData.skills = document.getElementById('inp-skills').value.split(",").map(s => s.trim()).filter(Boolean);
+      userData.projects = document.getElementById('inp-projects').value.trim();
+      userData.exp = document.getElementById('inp-exp').value.trim();
+      userData.certs = document.getElementById('inp-certs').value.trim();
+      userData.lang = document.getElementById('inp-lang').value.trim();
+
+      try {
+        await updateDoc(doc(db, "users", currentUid), userData);
+        renderCV();
+        alert("✅ Professional CV Updated & Saved!");
+      } catch (err) {
+        alert("❌ Error saving CV: " + err.message);
+      } finally {
+        btn.innerText = "Save & Update CV ✨";
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+
+</body>
+</html>

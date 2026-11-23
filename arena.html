@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Progressive Skill Arena | Bekar Naki? 🧲</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .arena-top-bar {
+      background: linear-gradient(135deg, rgba(88, 28, 135, 0.7), rgba(131, 24, 67, 0.7));
+      border: 1px solid rgba(216, 180, 254, 0.35);
+      border-radius: 18px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    /* Language Cards Grid */
+    .game-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.4rem;
+      margin-bottom: 2.5rem;
+    }
+    .lang-game-card {
+      background: rgba(22, 14, 48, 0.88);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+      position: relative;
+    }
+    .lang-game-card:hover {
+      transform: translateY(-5px);
+      border-color: #f472b6;
+    }
+    .rec-tag {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.25rem 0.65rem;
+      border-radius: 99px;
+      text-transform: uppercase;
+    }
+
+    /* Active Game Stage */
+    #active-game-stage {
+      display: none;
+      background: rgba(15, 9, 36, 0.96);
+      border: 2px solid #8b5cf6;
+      border-radius: 20px;
+      padding: 2.2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+    }
+
+    /* Level Difficulty Badges */
+    .diff-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .diff-easy { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+    .diff-medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+    .diff-hard { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+
+    /* Level Stepper Dots */
+    .level-dots {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0.8rem 0 1.4rem;
+    }
+    .lvl-dot {
+      flex: 1;
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .lvl-dot.done { background: #10b981; }
+    .lvl-dot.active { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+
+    /* Help & Solution Box */
+    .wrong-help-box {
+      display: none;
+      margin-top: 1.2rem;
+      padding: 1.1rem 1.3rem;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid #ef4444;
+      border-radius: 12px;
+    }
+    .solution-reveal-box {
+      display: none;
+      margin-top: 1rem;
+      padding: 1.1rem 1.3rem;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid #10b981;
+      border-radius: 12px;
+      color: #ecfdf5;
+    }
+    .btn-help {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      border: none;
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.88rem;
+      margin-top: 0.6rem;
+    }
+    .btn-help:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <a href="index.html" class="logo">Bekar <span>Naki?</span> 🧲</a>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="cvmaker.html">CV Maker 📄</a>
+      <a href="arena.html" class="active">Skill Arena 🎮</a>
+      <button id="logout-btn" class="btn btn-danger">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. TOP ARENA PROGRESS BANNER -->
+    <div class="arena-top-bar">
+      <div style="flex: 1; min-width: 260px;">
+        <div style="font-size:0.85rem; color:#e9d5ff; font-weight:700;">TARGET ROLE: <span id="arena-dreamjob">Frontend Web Developer</span></div>
+        <h1 style="margin:0.3rem 0 0.5rem; font-size:2rem;">Progressive Coding Arena 🎮</h1>
+        <p style="margin:0; color:#cbd5e1; font-size:0.95rem;">
+          Select a language to play progressive levels (<strong>Easy → Medium → Hard</strong>). Stuck on a level? Take instant guided help to learn and solve!
+        </p>
+      </div>
+
+      <div style="background:rgba(9,5,20,0.75); padding:1.2rem 1.6rem; border-radius:14px; border:1px solid var(--border); min-width:240px;">
+        <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.9rem;">
+          <span>Overall Arena Level</span>
+          <span style="color:#34d399;"><span id="arena-level-num">0</span> / 100</span>
+        </div>
+        <div class="progress-bar" style="margin:0.6rem 0;">
+          <div class="progress-fill" id="arena-level-bar" style="width:0%;"></div>
+        </div>
+        <div style="font-size:0.8rem; color:var(--text-muted);">Synced live with Dashboard & CV</div>
+      </div>
+    </div>
+
+    <!-- 2. ACTIVE PROGRESSIVE GAME STAGE -->
+    <div id="active-game-stage">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1rem;">
+        <div>
+          <span id="stage-lang-label" style="color:#c084fc; font-weight:800; font-size:0.9rem;">LANGUAGE TRACK</span>
+          <h2 id="stage-level-heading" style="margin:0.2rem 0 0;">Level 1 of 3</h2>
+        </div>
+        <button class="btn btn-outline" onclick="closeGameStage()">✕ Back to Languages</button>
+      </div>
+
+      <!-- Level Progress Dots -->
+      <div class="level-dots" id="stage-dots"></div>
+
+      <!-- Question & Options Area -->
+      <div id="stage-content"></div>
+
+      <!-- Wrong Answer -> Offer Help Box -->
+      <div class="wrong-help-box" id="wrong-help-box">
+        <div style="font-weight:700; color:#fca5a5;">❌ Oops! That's not the right answer for this level.</div>
+        <div style="font-size:0.9rem; color:#fecaca; margin-top:0.2rem;">
+          Need a hand? You can take help on this level to see the exact solution and explanation!
+        </div>
+        <button class="btn-help" onclick="revealHelpSolution()">💡 Take Help (Show Solution)</button>
+      </div>
+
+      <!-- Revealed Solution Box -->
+      <div class="solution-reveal-box" id="solution-reveal-box">
+        <div style="font-weight:800; color:#34d399; margin-bottom:0.3rem;">✅ Level Solution & Explanation:</div>
+        <div id="solution-text" style="font-size:0.92rem; line-height:1.5;"></div>
+        <div style="font-size:0.82rem; color:#a7f3d0; margin-top:0.5rem;">
+          Now select the correct option above to clear this level and advance!
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. LANGUAGE TRACKS HUB -->
+    <h2 style="margin-bottom:1.2rem;">Select a Programming Language to Play</h2>
+    <div class="game-hub-grid" id="game-cards-container"></div>
+
+  </div>
+
+  <!-- Firebase & Progressive Level Engine -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
+      authDomain: "bekar-naki.firebaseapp.com",
+      projectId: "bekar-naki",
+      storageBucket: "bekar-naki.firebasestorage.app",
+      messagingSenderId: "720723215856",
+      appId: "1:720723215856:web:7deb0f660050f140720935",
+      measurementId: "G-1VVJZHJ9NM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUid = null;
+    let userData = {};
+    let activeLangId = null;
+
+    // Progressive Levels (Easy -> Medium -> Hard) for Each Language
+    const tracksData = [
+      {
+        id: "html",
+        name: "🌐 HTML5",
+        desc: "Master document structure, semantic tags, forms, and accessibility from Level 1 to 3.",
+        roles: ["Frontend Web Developer", "Full-Stack Software Engineer"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: Semantic Page Heading",
+            prompt: "Which HTML5 tag is used to define the primary, most important heading on a webpage?",
+            code: `&lt;!-- Add the main title below --&gt;\n&lt;___&gt;Welcome to Bekar Naki?&lt;/___&gt;`,
+            options: ["<head>", "<h1>", "<h6>", "<title>"],
+            correct: 1,
+            xp: 10,
+            solution: "<strong>Correct Answer: &lt;h1&gt;</strong><br/>&lt;h1&gt; defines the top-level main heading visible on the page, whereas &lt;title&gt; sets the browser tab name inside &lt;head&gt;."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Opening Links Safely in a New Tab",
+            prompt: "Which attribute combination opens a link in a new browser tab securely?",
+            code: `&lt;a href="https://github.com" ______&gt;GitHub&lt;/a&gt;`,
+            options: ['open="new"', 'target="_blank"', 'rel="tab"', 'href="_new"'],
+            correct: 1,
+            xp: 15,
+            solution: '<strong>Correct Answer: target="_blank"</strong><br/>Setting <code>target="_blank"</code> instructs the browser to open the linked URL in a brand new tab.'
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: HTML5 Form Validation Attribute",
+            prompt: "How do you enforce that an email input field cannot be submitted empty AND must match a valid email pattern natively in HTML5?",
+            code: `&lt;input type="____" name="user_email" ____ /&gt;`,
+            options: ['type="text" with validate', 'type="email" with required', 'type="mail" with mandatory', 'type="string" with check'],
+            correct: 1,
+            xp: 20,
+            solution: '<strong>Correct Answer: type="email" with required</strong><br/><code>type="email"</code> automatically checks for the <code>@</code> domain format, and the boolean <code>required</code> attribute prevents empty submission.'
+          }
+        ]
+      },
+      {
+        id: "css",
+        name: "🎨 CSS3",
+        desc: "Level up from basic color styling to Flexbox centering and responsive Grid layouts.",
+        roles: ["Frontend Web Developer", "Full-Stack Software Engineer"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: Rounded Button Corners",
+            prompt: "Which CSS property turns a sharp rectangular button into a smooth pill-shaped button?",
+            code: `.btn {\n  background: purple;\n  ________: 99px;\n}`,
+            options: ["corner-round", "border-radius", "box-curve", "edge-style"],
+            correct: 1,
+            xp: 10,
+            solution: "<strong>Correct Answer: border-radius</strong><br/><code>border-radius: 99px;</code> curves the outer corners of an element into a pill shape."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Perfect Flexbox Centering",
+            prompt: "When using <code>display: flex;</code>, which two properties center a child box both horizontally and vertically?",
+            code: `.container {\n  display: flex;\n  ________: center;\n  ________: center;\n}`,
+            options: ["text-align & vertical-align", "justify-content & align-items", "flex-center & box-align", "margin & padding"],
+            correct: 1,
+            xp: 15,
+            solution: "<strong>Correct Answer: justify-content & align-items</strong><br/><code>justify-content: center</code> centers along the main horizontal axis, while <code>align-items: center</code> centers along the vertical cross-axis."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: CSS Specificity Wars",
+            prompt: "An element has <code>&lt;p id='intro' class='text'&gt;Hello&lt;/p&gt;</code>. Which CSS rule wins and sets the final color?",
+            code: `#intro { color: cyan; }\n.text { color: pink; }\np { color: yellow; }`,
+            options: ["yellow (Element selector)", "pink (Class selector)", "cyan (ID selector)", "Browser default black"],
+            correct: 2,
+            xp: 20,
+            solution: "<strong>Correct Answer: cyan (ID selector)</strong><br/>In CSS Specificity hierarchy, an ID selector (<code>#intro</code> = 100 points) overrides a Class selector (<code>.text</code> = 10 points) and an Element selector (<code>p</code> = 1 point)."
+          }
+        ]
+      },
+      {
+        id: "js",
+        name: "⚡ JavaScript",
+        desc: "Conquer variables, array methods, closures, and asynchronous promises step-by-step.",
+        roles: ["Frontend Web Developer", "Backend PHP / Node Developer", "Full-Stack Software Engineer"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: String + Number Coercion",
+            prompt: "What will be printed in the console when adding a string and a number?",
+            code: `let a = "10";\nlet b = 5;\nconsole.log(a + b);`,
+            options: ["15", '"105"', "NaN", "SyntaxError"],
+            correct: 1,
+            xp: 10,
+            solution: '<strong>Correct Answer: "105"</strong><br/>Because <code>a</code> is a string, the <code>+</code> operator performs string concatenation instead of math addition, producing <code>"105"</code>.'
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Array Filter & Map Pipeline",
+            prompt: "What is the final output of this chained array operation?",
+            code: `const arr = [1, 2, 3, 4];\nconst res = arr.filter(x => x % 2 === 0).map(x => x * 10);\nconsole.log(res[1]);`,
+            options: ["20", "30", "40", "undefined"],
+            correct: 2,
+            xp: 15,
+            solution: "<strong>Correct Answer: 40</strong><br/><code>filter(x => x % 2 === 0)</code> keeps even numbers <code>[2, 4]</code>. Then <code>map(x => x * 10)</code> transforms them into <code>[20, 40]</code>. Index <code>[1]</code> is <code>40</code>."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: Event Loop Execution Order",
+            prompt: "In what exact order will the numbers print in the JavaScript console?",
+            code: `console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);`,
+            options: ["1, 2, 3, 4", "1, 4, 2, 3", "1, 4, 3, 2", "1, 3, 4, 2"],
+            correct: 2,
+            xp: 20,
+            solution: "<strong>Correct Answer: 1, 4, 3, 2</strong><br/>Synchronous code runs first (<code>1</code>, then <code>4</code>). Next, Microtasks (<code>Promise.then</code> → <code>3</code>) always execute before Macrotasks (<code>setTimeout</code> → <code>2</code>)."
+          }
+        ]
+      },
+      {
+        id: "c",
+        name: "⚙️ C Programming",
+        desc: "Progress from basic loops to pointer arithmetic and dynamic memory allocation.",
+        roles: ["Software Engineer (C / Java)", "IT Executive / Junior Analyst"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: Integer Division Trap",
+            prompt: "What output does this C program print?",
+            code: `int a = 7, b = 2;\nprintf("%d", a / b);`,
+            options: ["3.5", "3", "4", "1"],
+            correct: 1,
+            xp: 10,
+            solution: "<strong>Correct Answer: 3</strong><br/>In C, dividing two integers (<code>7 / 2</code>) truncates the decimal part and returns only the integer quotient <code>3</code>."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Pointer Arithmetic",
+            prompt: "If <code>ptr</code> points to the first element of <code>arr</code>, what does <code>*(ptr + 2)</code> print?",
+            code: `int arr[] = {10, 25, 50, 75};\nint *ptr = arr;\nprintf("%d", *(ptr + 2));`,
+            options: ["10", "25", "50", "75"],
+            correct: 2,
+            xp: 15,
+            solution: "<strong>Correct Answer: 50</strong><br/><code>ptr</code> starts at index 0 (<code>10</code>). Moving <code>ptr + 2</code> jumps 2 integer positions forward to index 2, whose value is <code>50</code>."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: Static Variable Persistence",
+            prompt: "What will be printed when <code>counter()</code> is called three times in a row?",
+            code: `void counter() {\n  static int count = 0;\n  count++;\n  printf("%d ", count);\n}\n// main calls counter(); counter(); counter();`,
+            options: ["1 1 1", "0 1 2", "1 2 3", "Garbage value"],
+            correct: 2,
+            xp: 20,
+            solution: "<strong>Correct Answer: 1 2 3</strong><br/>A <code>static</code> local variable in C retains its value in memory between function calls instead of resetting to 0 each time."
+          }
+        ]
+      },
+      {
+        id: "java",
+        name: "☕ Java OOP",
+        desc: "Master Java syntax, inheritance, polymorphism, and exception handling across 3 tiers.",
+        roles: ["Software Engineer (C / Java)", "Full-Stack Software Engineer", "Backend PHP / Node Developer"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: Class Inheritance Keyword",
+            prompt: "Which keyword allows a <code>Developer</code> class to inherit fields and methods from a <code>Person</code> class?",
+            code: `public class Developer _______ Person {\n  // code\n}`,
+            options: ["implements", "inherits", "extends", "super"],
+            correct: 2,
+            xp: 10,
+            solution: "<strong>Correct Answer: extends</strong><br/>In Java, classes inherit from a superclass using <code>extends</code>, while <code>implements</code> is used for interfaces."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: String Pool vs Heap Comparison",
+            prompt: "What does this Java snippet output?",
+            code: `String s1 = new String("Bekar");\nString s2 = new String("Bekar");\nSystem.out.println(s1 == s2);`,
+            options: ["true", "false", "Compilation Error", "null"],
+            correct: 1,
+            xp: 15,
+            solution: "<strong>Correct Answer: false</strong><br/>Using <code>new String()</code> creates two distinct objects in Heap memory. <code>==</code> compares memory references (which differ), whereas <code>s1.equals(s2)</code> compares actual text."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: Try-Catch-Finally Return Override",
+            prompt: "What integer value does this method return when invoked?",
+            code: `static int test() {\n  try {\n    return 10;\n  } finally {\n    return 20;\n  }\n}`,
+            options: ["10", "20", "30", "Unreachable code error"],
+            correct: 1,
+            xp: 20,
+            solution: "<strong>Correct Answer: 20</strong><br/>In Java, the <code>finally</code> block always executes before a method exits—so a <code>return 20</code> inside <code>finally</code> overrides the earlier <code>return 10</code>."
+          }
+        ]
+      }
+    ];
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      currentUid = user.uid;
+      const docSnap = await getDoc(doc(db, "users", currentUid));
+      if (docSnap.exists()) {
+        userData = docSnap.data();
+        renderArenaHub();
+      }
+    });
+
+    function renderArenaHub() {
+      const dreamJob = userData.dreamJob || "Frontend Web Developer";
+      const overallLevel = userData.level || 0;
+      const langLevels = userData.langLevels || {}; // e.g., { html: 1, css: 0, ... }
+
+      document.getElementById('arena-dreamjob').innerText = dreamJob;
+      document.getElementById('arena-level-num').innerText = overallLevel;
+      document.getElementById('arena-level-bar').style.width = `${Math.min(overallLevel, 100)}%`;
+
+      const container = document.getElementById('game-cards-container');
+      container.innerHTML = "";
+
+      tracksData.forEach(track => {
+        const isRec = track.roles.includes(dreamJob);
+        const completedCount = langLevels[track.id] || 0; // 0, 1, 2, or 3
+        const totalLevels = track.levels.length;
+        const isMastered = completedCount >= totalLevels;
+
+        container.innerHTML += `
+          <div class="lang-game-card">
+            ${isRec ? `<div class="rec-tag">★ Recommended</div>` : ``}
+            <div>
+              <div style="font-size:1.35rem; font-weight:800; margin-bottom:0.4rem;">${track.name}</div>
+              <p style="color:#cbd5e1; font-size:0.9rem; margin:0 0 1.2rem;">${track.desc}</p>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--text-muted); margin-bottom:0.4rem;">
+                <span>Progress: <strong>Level ${completedCount} / ${totalLevels}</strong></span>
+                <span>${isMastered ? "🏆 Mastered" : "Easy → Hard"}</span>
+              </div>
+              <div class="progress-bar" style="height:8px; margin:0 0 1rem;">
+                <div class="progress-fill" style="width:${(completedCount / totalLevels) * 100}%;"></div>
+              </div>
+              <button class="btn" style="width:100%;" onclick="openLanguageTrack('${track.id}')">
+                ${isMastered ? "Replay Levels ↺" : `Play Level ${completedCount + 1} →`}
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Open Progressive Level Stage for Selected Language
+    window.openLanguageTrack = function(langId) {
+      activeLangId = langId;
+      const track = tracksData.find(t => t.id === langId);
+      const langLevels = userData.langLevels || {};
+      let currentLvlIdx = langLevels[langId] || 0;
+
+      // If all 3 levels done, allow replaying from Level 1 (index 0)
+      if (currentLvlIdx >= track.levels.length) {
+        currentLvlIdx = 0;
+      }
+
+      renderLevelQuestion(track, currentLvlIdx);
+
+      const stage = document.getElementById('active-game-stage');
+      stage.style.display = "block";
+      stage.scrollIntoView({ behavior: "smooth" });
+    };
+
+    function renderLevelQuestion(track, lvlIdx) {
+      const qData = track.levels[lvlIdx];
+      const completedCount = (userData.langLevels || {})[track.id] || 0;
+
+      // Hide previous help/solution boxes
+      document.getElementById('wrong-help-box').style.display = "none";
+      document.getElementById('solution-reveal-box').style.display = "none";
+
+      document.getElementById('stage-lang-label').innerText = `${track.name} TRACK`;
+      document.getElementById('stage-level-heading').innerText = `${qData.title} (+${qData.xp} XP)`;
+
+      // Render Stepper Dots
+      const dotsEl = document.getElementById('stage-dots');
+      dotsEl.innerHTML = track.levels.map((_, idx) => {
+        let cls = "lvl-dot";
+        if (idx < completedCount) cls += " done";
+        else if (idx === lvlIdx) cls += " active";
+        return `<div class="${cls}"></div>`;
+      }).join("");
+
+      // Difficulty badge class
+      let diffClass = "diff-easy";
+      if (qData.diff === "Medium") diffClass = "diff-medium";
+      if (qData.diff === "Hard") diffClass = "diff-hard";
+
+      // Render Question & Options
+      const contentEl = document.getElementById('stage-content');
+      contentEl.innerHTML = `
+        <span class="diff-badge ${diffClass}">Difficulty: ${qData.diff}</span>
+        <p style="font-size:1.05rem; color:#f8fafc; margin:0.4rem 0 1rem;">${qData.prompt}</p>
+        <div class="code-box">${qData.code}</div>
+        <div>
+          ${qData.options.map((opt, idx) => `
+            <button class="option-btn" onclick="submitLevelAnswer('${track.id}', ${lvlIdx}, ${idx})">
+              ${String.fromCharCode(65 + idx)}. ${opt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+            </button>
+          `).join("")}
+        </div>
+      `;
+
+      // Pre-load explanation text for the Help button
+      document.getElementById('solution-text').innerHTML = qData.solution;
+    }
+
+    // Reveal Help Solution when user clicks "Take Help"
+    window.revealHelpSolution = function() {
+      document.getElementById('solution-reveal-box').style.display = "block";
+    };
+
+    // Check Answer & Progress to Next Level
+    window.submitLevelAnswer = async function(langId, lvlIdx, chosenIdx) {
+      const track = tracksData.find(t => t.id === langId);
+      const qData = track.levels[lvlIdx];
+
+      if (chosenIdx !== qData.correct) {
+        // Show "Take Help" prompt box below
+        const helpBox = document.getElementById('wrong-help-box');
+        helpBox.style.display = "block";
+        helpBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        return;
+      }
+
+      // Correct Answer! Update Firebase Progress
+      const langLevels = userData.langLevels || {};
+      const prevCompleted = langLevels[langId] || 0;
+      let newOverallLevel = userData.level || 0;
+
+      // Only award new XP if clearing this level for the first time
+      if (lvlIdx + 1 > prevCompleted) {
+        langLevels[langId] = lvlIdx + 1;
+        newOverallLevel = Math.min(100, newOverallLevel + qData.xp);
+        userData.langLevels = langLevels;
+        userData.level = newOverallLevel;
+
+        try {
+          await updateDoc(doc(db, "users", currentUid), {
+            level: newOverallLevel,
+            langLevels: langLevels
+          });
+        } catch (err) {
+          console.error("Firebase update error:", err);
+        }
+      }
+
+      renderArenaHub();
+
+      // Advance to next level automatically or celebrate track completion
+      if (lvlIdx + 1 < track.levels.length) {
+        alert(`🎉 Level ${lvlIdx + 1} Cleared! +${qData.xp} XP Synced!\nAdvancing to Level ${lvlIdx + 2} (${track.levels[lvlIdx + 1].diff})...`);
+        renderLevelQuestion(track, lvlIdx + 1);
+      } else {
+        alert(`🏆 Congratulations! You mastered all levels of ${track.name}!\nYour Overall Level (${newOverallLevel}/100) is synced with your Dashboard & CV.`);
+        closeGameStage();
+      }
+    };
+
+    window.closeGameStage = function() {
+      document.getElementById('active-game-stage').style.display = "none";
+    };
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+
+</body>
+</html>

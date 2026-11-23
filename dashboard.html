@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Dashboard | Bekar Naki? 🧲</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Dashboard Hero Banner */
+    .dash-hero {
+      background: linear-gradient(135deg, rgba(88, 28, 135, 0.65) 0%, rgba(30, 27, 75, 0.85) 55%, rgba(131, 24, 67, 0.65) 100%);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-hero::after {
+      content: "🧲";
+      position: absolute;
+      right: 2rem;
+      bottom: -1rem;
+      font-size: 7rem;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+    .status-chip {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      padding: 0.3rem 0.9rem;
+      border-radius: 99px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    /* 4 Stat Cards Grid */
+    .dash-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2.2rem;
+    }
+    .dash-stat-card {
+      background: rgba(22, 14, 48, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.4rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .dash-stat-card:hover {
+      transform: translateY(-4px);
+      border-color: #c084fc;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin: 0.5rem 0 0.2rem;
+      color: #ffffff;
+    }
+
+    /* 2 Big Action Portals (CV Maker & Game Arena) */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 820px) {
+      .portal-grid { grid-template-columns: 1fr; }
+    }
+    .portal-card {
+      border-radius: 20px;
+      padding: 2.2rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .portal-card:hover {
+      transform: translateY(-6px);
+    }
+    .portal-cv {
+      background: linear-gradient(145deg, rgba(49, 16, 99, 0.9), rgba(19, 11, 41, 0.95));
+      border: 1.5px solid rgba(168, 85, 247, 0.5);
+      box-shadow: 0 12px 35px rgba(124, 58, 237, 0.25);
+    }
+    .portal-game {
+      background: linear-gradient(145deg, rgba(131, 24, 67, 0.85), rgba(19, 11, 41, 0.95));
+      border: 1.5px solid rgba(244, 114, 182, 0.5);
+      box-shadow: 0 12px 35px rgba(219, 39, 119, 0.25);
+    }
+    .portal-icon {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+    .portal-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 1.8rem;
+      color: #cbd5e1;
+      font-size: 0.92rem;
+    }
+    .portal-list li {
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Bottom Two-Column Section */
+    .checklist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1rem;
+      background: rgba(9, 5, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 0.7rem;
+      font-size: 0.92rem;
+    }
+    .tag-done {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .tag-pending {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <a href="index.html" class="logo">Bekar <span>Naki?</span> 🧲</a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="cvmaker.html">CV Maker 📄</a>
+      <a href="arena.html">Skill Arena 🎮</a>
+      <button id="logout-btn" class="btn btn-danger">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. GORGEOUS WELCOME HERO BANNER -->
+    <div class="dash-hero">
+      <div>
+        <div class="status-chip" id="user-status-chip">● Active Career Profile</div>
+        <h1 style="margin:0 0 0.5rem; font-size:2.3rem;">
+          Hello, <span id="dash-name" class="gradient-text">Developer</span>! 🚀
+        </h1>
+        <p style="margin:0; color:#e2e8f0; max-width:560px; font-size:1rem;">
+          Your career command center is ready. Build an executive-ready CV or jump into the coding arena to boost your verified skill rank.
+        </p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.3rem;">Target Dream Role</div>
+        <div id="dash-dreamjob" style="font-size:1.25rem; font-weight:800; color:#f472b6;">Frontend Web Developer</div>
+        <a href="cvmaker.html" style="font-size:0.85rem; color:#38bdf8; text-decoration:none;">Change Target Role →</a>
+      </div>
+    </div>
+
+    <!-- 2. LIVE STATS OVERVIEW -->
+    <div class="dash-stats">
+      <div class="dash-stat-card">
+        <div class="stat-label"><span>Arena Skill Level</span> <span>🏆</span></div>
+        <div class="stat-value"><span id="stat-level">0</span><span style="font-size:1rem; color:var(--text-muted);">/100</span></div>
+        <div class="progress-bar" style="height:8px; margin:0.5rem 0 0;">
+          <div class="progress-fill" id="stat-level-bar" style="width:0%;"></div>
+        </div>
+      </div>
+
+      <div class="dash-stat-card">
+        <div class="stat-label"><span>CV Profile Readiness</span> <span>📄</span></div>
+        <div class="stat-value"><span id="stat-cv-percent">25</span>%</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">Auto-calculated from your info</div>
+      </div>
+
+      <div class="dash-stat-card">
+        <div class="stat-label"><span>Listed Tech Skills</span> <span>⚡</span></div>
+        <div class="stat-value" id="stat-skills-count">3</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">Displayed on your live CV</div>
+      </div>
+
+      <div class="dash-stat-card">
+        <div class="stat-label"><span>Verified CV Badge</span> <span>🛡️</span></div>
+        <div class="stat-value" id="stat-badge-status" style="font-size:1.3rem; padding-top:0.3rem; color:#fbbf24;">Unverified</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">Play Arena to unlock badge</div>
+      </div>
+    </div>
+
+    <!-- 3. TWO MAIN ACTION PORTALS (CV MAKER & GAME ARENA) -->
+    <h2 style="margin-bottom:1rem;">Choose Your Next Mission</h2>
+    <div class="portal-grid">
+      
+      <!-- PORTAL 1: CV MAKER -->
+      <div class="portal-card portal-cv">
+        <div>
+          <div class="portal-icon">📄✨</div>
+          <h2 style="margin:0 0 0.5rem; font-size:1.7rem;">Professional CV Maker</h2>
+          <p style="color:#cbd5e1; margin:0;">
+            Generate a clean, classic black-and-white ATS-friendly CV tailored for Bangladeshi & global recruiters.
+          </p>
+          <ul class="portal-list">
+            <li>✅ Upload passport-size photo & edit any field anytime</li>
+            <li>✅ Dynamic University, College & School GPA/CGPA table</li>
+            <li>✅ One-click Clean A4 PDF download without watermarks</li>
+          </ul>
+        </div>
+        <a href="cvmaker.html" class="btn" style="text-align:center; width:100%; font-size:1.05rem;">
+          Open CV Maker →
+        </a>
+      </div>
+
+      <!-- PORTAL 2: CODING GAME ARENA -->
+      <div class="portal-card portal-game">
+        <div>
+          <div class="portal-icon">🎮🔥</div>
+          <h2 style="margin:0 0 0.5rem; font-size:1.7rem;">Gamified Skill Arena</h2>
+          <p style="color:#cbd5e1; margin:0;">
+            Test your readiness for your dream job and play Duolingo-style bite-sized coding puzzles to level up.
+          </p>
+          <ul class="portal-list">
+            <li>🎯 Take a diagnostic quiz to find your starting level (0–100)</li>
+            <li>🧩 Solve HTML, CSS, JS, C, Java & PHP bug-fix challenges</li>
+            <li>🏅 Auto-sync your verified level badge directly onto your CV</li>
+          </ul>
+        </div>
+        <a href="arena.html" class="btn" style="background:linear-gradient(135deg, #db2777, #9333ea); text-align:center; width:100%; font-size:1.05rem;">
+          Enter Skill Arena 🎮 →
+        </a>
+      </div>
+
+    </div>
+
+    <!-- 4. CAREER CHECKLIST & CURRENT SKILLS PREVIEW -->
+    <div class="grid-2">
+      <div class="card" style="margin:0;">
+        <h3>📋 Career Readiness Checklist</h3>
+        <p style="color:var(--text-muted); font-size:0.88rem;">Complete these steps to maximize your hiring chances:</p>
+        
+        <div class="checklist-item">
+          <span>1. Create Bekar Naki? Account</span>
+          <span class="tag-done">✓ Done</span>
+        </div>
+        <div class="checklist-item">
+          <span>2. Add Academic Qualifications (SSC/HSC/Uni)</span>
+          <span id="chk-edu" class="tag-pending">Pending</span>
+        </div>
+        <div class="checklist-item">
+          <span>3. Add Key Software / Academic Projects</span>
+          <span id="chk-proj" class="tag-pending">Pending</span>
+        </div>
+        <div class="checklist-item">
+          <span>4. Score 40+ in Skill Arena to Verify CV</span>
+          <span id="chk-arena" class="tag-pending">Pending</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin:0;">
+        <h3>⚡ Your Current Skill Stack</h3>
+        <p style="color:var(--text-muted); font-size:0.88rem;">These skills are currently linked to your profile:</p>
+        <div id="dash-skills-box" style="margin: 1.2rem 0;"></div>
+        <a href="cvmaker.html" class="btn btn-outline" style="font-size:0.88rem; padding:0.6rem 1.1rem;">
+          + Add or Edit Skills
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Firebase Connection -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
+      authDomain: "bekar-naki.firebaseapp.com",
+      projectId: "bekar-naki",
+      storageBucket: "bekar-naki.firebasestorage.app",
+      messagingSenderId: "720723215856",
+      appId: "1:720723215856:web:7deb0f660050f140720935",
+      measurementId: "G-1VVJZHJ9NM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const docSnap = await getDoc(doc(db, "users", user.uid));
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        renderDashboard(data);
+      }
+    });
+
+    function renderDashboard(data) {
+      // Hero info
+      document.getElementById('dash-name').innerText = data.name || "Developer";
+      document.getElementById('user-status-chip').innerText = `● ${data.status || "Active Member"}`;
+      document.getElementById('dash-dreamjob').innerText = data.dreamJob || "Frontend Web Developer";
+
+      // Arena Level
+      const level = data.level || 0;
+      document.getElementById('stat-level').innerText = level;
+      document.getElementById('stat-level-bar').style.width = `${Math.min(level, 100)}%`;
+
+      if (level > 0) {
+        const badgeEl = document.getElementById('stat-badge-status');
+        badgeEl.innerText = `Verified Lvl ${level}`;
+        badgeEl.style.color = "#34d399";
+      }
+
+      // Skills
+      const skills = data.skills || [];
+      document.getElementById('stat-skills-count').innerText = skills.length;
+      const skillsBox = document.getElementById('dash-skills-box');
+      skillsBox.innerHTML = skills.map(s => `<span class="badge">${s}</span>`).join(" ");
+
+      // Calculate CV Readiness % & Checklist
+      let score = 25; // Base score for account creation
+      const hasEdu = !!(data.uniName || data.colName || data.schName);
+      const hasProj = !!(data.projects && data.projects.trim() !== "");
+      const hasPhone = !!(data.phone && data.phone.trim() !== "");
+
+      if (hasPhone) score += 15;
+      if (hasEdu) {
+        score += 25;
+        const el = document.getElementById('chk-edu');
+        el.innerText = "✓ Done";
+        el.className = "tag-done";
+      }
+      if (hasProj) {
+        score += 20;
+        const el = document.getElementById('chk-proj');
+        el.innerText = "✓ Done";
+        el.className = "tag-done";
+      }
+      if (level >= 40) {
+        score += 15;
+        const el = document.getElementById('chk-arena');
+        el.innerText = "✓ Done";
+        el.className = "tag-done";
+      }
+
+      document.getElementById('stat-cv-percent').innerText = Math.min(score, 100);
+    }
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account | Bekar Naki? 🧲</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Bekar <span>Naki?</span> 🧲</a>
+    <div class="nav-links">
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card" style="max-width: 460px; margin: 3rem auto;">
+      
+      <div style="text-align:center; margin-bottom:1.8rem;">
+        <h2 style="font-size:1.9rem; margin-bottom:0.4rem;">Create New Account 🚀</h2>
+        <p style="color:var(--text-muted); margin:0;">Start building your CV & leveling up</p>
+      </div>
+
+      <form id="signup-form">
+        <label>Full Name</label>
+        <input type="text" id="reg-name" placeholder="e.g. Moshiur Rahman" required />
+
+        <label>Username</label>
+        <input type="text" id="reg-username" placeholder="e.g. mitul18" required />
+
+        <label>Email Address</label>
+        <input type="email" id="reg-email" placeholder="e.g. student@university.edu" required />
+
+        <label>Password (Minimum 6 characters)</label>
+        <input type="password" id="reg-pass" placeholder="Create a password" minlength="6" required />
+
+        <label>Current Status</label>
+        <select id="reg-status">
+          <option value="Undergraduate Student">Undergraduate Student</option>
+          <option value="Fresh Graduate">Fresh Graduate</option>
+          <option value="Job Seeker">Job Seeker</option>
+        </select>
+
+        <button type="submit" id="signup-btn" class="btn" style="width:100%;">Create Account →</button>
+      </form>
+
+      <hr style="border:0; border-top:1px solid var(--border); margin:1.6rem 0;" />
+
+      <div style="text-align:center; font-size:0.95rem; color:var(--text-muted);">
+        Already have an account? 
+        <a href="login.html" style="color:#c084fc; font-weight:700; text-decoration:none;">
+          Login Here
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Firebase Connection -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
+      authDomain: "bekar-naki.firebaseapp.com",
+      projectId: "bekar-naki",
+      storageBucket: "bekar-naki.firebasestorage.app",
+      messagingSenderId: "720723215856",
+      appId: "1:720723215856:web:7deb0f660050f140720935",
+      measurementId: "G-1VVJZHJ9NM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('signup-btn');
+      btn.innerText = "Creating Account...";
+      btn.disabled = true;
+
+      const name = document.getElementById('reg-name').value.trim();
+      const username = document.getElementById('reg-username').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-pass').value;
+      const status = document.getElementById('reg-status').value;
+
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCred.user.uid;
+
+        // Save user profile to Firestore Database
+        await setDoc(doc(db, "users", uid), {
+          name: name,
+          username: username,
+          email: email,
+          status: status,
+          dreamJob: "Frontend Web Developer",
+          level: 0,
+          skills: ["HTML", "CSS", "C Programming"]
+        });
+
+        alert("🎉 Account created successfully!");
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        alert("❌ Error: " + error.message);
+        btn.innerText = "Create Account →";
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
