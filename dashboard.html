@@ -154,6 +154,49 @@
       font-size: 0.78rem;
       font-weight: 700;
     }
+
+    /* Inline Skill Editor Styles */
+    .skill-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(139, 92, 246, 0.2);
+      color: #e9d5ff;
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      padding: 0.35rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin: 0.25rem;
+    }
+    .skill-pill button {
+      background: none;
+      border: none;
+      color: #f472b6;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    .skill-pill button:hover {
+      color: #fb7185;
+    }
+    .skill-editor-box {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .skill-input-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    .skill-input-row input {
+      margin-bottom: 0;
+      flex: 1;
+    }
   </style>
 </head>
 <body>
@@ -193,7 +236,7 @@
     <div class="dash-stats">
       <div class="dash-stat-card">
         <div class="stat-label"><span>Arena Skill Level</span> <span>🏆</span></div>
-        <div class="stat-"><span id="stat-level">0</span><span style="font-size:1rem; color:var(--text-muted);">/100</span></div>
+        <div class="stat-value"><span id="stat-level">0</span><span style="font-size:1rem; color:var(--text-muted);">/100</span></div>
         <div class="progress-bar" style="height:8px; margin:0.5rem 0 0;">
           <div class="progress-fill" id="stat-level-bar" style="width:0%;"></div>
         </div>
@@ -201,7 +244,7 @@
 
       <div class="dash-stat-card">
         <div class="stat-label"><span>CV Profile Readiness</span> <span>📄</span></div>
-        <div class="stat-"><span id="stat-cv-percent">25</span>%</div>
+        <div class="stat-value"><span id="stat-cv-percent">25</span>%</div>
         <div style="font-size:0.82rem; color:var(--text-muted);">Auto-calculated from your info</div>
       </div>
 
@@ -288,11 +331,26 @@
 
       <div class="card" style="margin:0;">
         <h3>⚡ Your Current Skill Stack</h3>
-        <p style="color:var(--text-muted); font-size:0.88rem;">These skills are currently linked to your profile:</p>
-        <div id="dash-skills-box" style="margin: 1.2rem 0;"></div>
-        <a href="cvmaker.html" class="btn btn-outline" style="font-size:0.88rem; padding:0.6rem 1.1rem;">
+        <p style="color:var(--text-muted); font-size:0.88rem;">No default skills shown. Click below to add your own skills:</p>
+        
+        <!-- User Skills Display Area (Empty by default) -->
+        <div id="dash-skills-box" style="margin: 1.2rem 0; min-height: 36px;">
+          <span style="color: var(--text-muted); font-size: 0.88rem; font-style: italic;">No skills added yet.</span>
+        </div>
+
+        <!-- Toggle Button for Inline Add/Edit -->
+        <button type="button" id="toggle-skill-editor-btn" class="btn btn-outline" style="font-size:0.88rem; padding:0.6rem 1.1rem;">
           + Add or Edit Skills
-        </a>
+        </button>
+
+        <!-- Hidden Input Box (Opens when "+ Add or Edit Skills" is clicked) -->
+        <div id="skill-editor-box" class="skill-editor-box">
+          <label for="new-skill-input">Type a skill & press Add (click ✕ on any skill to remove):</label>
+          <div class="skill-input-row">
+            <input type="text" id="new-skill-input" placeholder="e.g., HTML, CSS, Java, Python" />
+            <button type="button" id="save-skill-btn" class="btn btn-green" style="padding: 0.75rem 1.2rem;">Add</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -302,7 +360,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
@@ -318,18 +376,51 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    let currentUserUid = null;
+    let currentSkills = [];
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = "login.html";
         return;
       }
 
+      currentUserUid = user.uid;
       const docSnap = await getDoc(doc(db, "users", user.uid));
       if (docSnap.exists()) {
         const data = docSnap.data();
         renderDashboard(data);
       }
     });
+
+    function renderSkillsUI(skills) {
+      document.getElementById('stat-skills-count').innerText = skills.length;
+      const skillsBox = document.getElementById('dash-skills-box');
+
+      if (!skills || skills.length === 0) {
+        skillsBox.innerHTML = `<span style="color: var(--text-muted); font-size: 0.88rem; font-style: italic;">No skills added yet.</span>`;
+        return;
+      }
+
+      skillsBox.innerHTML = skills.map((s, idx) => `
+        <span class="skill-pill">
+          ${s}
+          <button type="button" title="Remove skill" data-index="${idx}">✕</button>
+        </span>
+      `).join("");
+
+      // Attach remove listener to each skill pill
+      skillsBox.querySelectorAll("button[data-index]").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const index = parseInt(e.target.getAttribute("data-index"), 10);
+          currentSkills.splice(index, 1);
+          renderSkillsUI(currentSkills);
+          if (currentUserUid) {
+            await updateDoc(doc(db, "users", currentUserUid), { skills: currentSkills });
+          }
+        });
+      });
+    }
 
     function renderDashboard(data) {
       // Hero info
@@ -348,11 +439,9 @@
         badgeEl.style.color = "#34d399";
       }
 
-      // Skills
-      const skills = data.skills || [];
-      document.getElementById('stat-skills-count').innerText = skills.length;
-      const skillsBox = document.getElementById('dash-skills-box');
-      skillsBox.innerHTML = skills.map(s => `<span class="badge">${s}</span>`).join(" ");
+      // Skills (Default empty unless user adds)
+      currentSkills = Array.isArray(data.skills) ? data.skills : [];
+      renderSkillsUI(currentSkills);
 
       // Calculate CV Readiness % & Checklist
       let score = 25; // Base score for account creation
@@ -382,6 +471,40 @@
 
       document.getElementById('stat-cv-percent').innerText = Math.min(score, 100);
     }
+
+    // Toggle Add/Edit Skill Input Box
+    const toggleBtn = document.getElementById('toggle-skill-editor-btn');
+    const editorBox = document.getElementById('skill-editor-box');
+    const skillInput = document.getElementById('new-skill-input');
+    const saveSkillBtn = document.getElementById('save-skill-btn');
+
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = editorBox.style.display === 'none' || editorBox.style.display === '';
+      editorBox.style.display = isHidden ? 'block' : 'none';
+      if (isHidden) skillInput.focus();
+    });
+
+    async function handleAddSkill() {
+      const val = skillInput.value.trim();
+      if (!val) return;
+      if (!currentSkills.includes(val)) {
+        currentSkills.push(val);
+        renderSkillsUI(currentSkills);
+        if (currentUserUid) {
+          await updateDoc(doc(db, "users", currentUserUid), { skills: currentSkills });
+        }
+      }
+      skillInput.value = "";
+      skillInput.focus();
+    }
+
+    saveSkillBtn.addEventListener('click', handleAddSkill);
+    skillInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleAddSkill();
+      }
+    });
 
     // Logout
     document.getElementById('logout-btn').addEventListener('click', async () => {
