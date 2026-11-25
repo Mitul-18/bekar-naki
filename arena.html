@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Progressive Skill Arena | Bekar Naki? 🧲</title>
+  <title>Multi-Discipline Skill Arena | Bekar Naki? 🧲</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     .arena-top-bar {
@@ -11,7 +11,7 @@
       border: 1px solid rgba(216, 180, 254, 0.35);
       border-radius: 18px;
       padding: 1.8rem 2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -19,7 +19,30 @@
       gap: 1.5rem;
     }
 
-    /* Language Cards Grid */
+    /* Department Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 0.7rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: rgba(22, 14, 48, 0.85);
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.55rem 1.2rem;
+      border-radius: 99px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: linear-gradient(135deg, #7c3aed, #db2777);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    /* Tracks Grid */
     .game-hub-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -53,6 +76,14 @@
       border-radius: 99px;
       text-transform: uppercase;
     }
+    .dept-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.3rem;
+    }
 
     /* Active Game Stage */
     #active-game-stage {
@@ -64,8 +95,6 @@
       margin-bottom: 2.5rem;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
     }
-
-    /* Level Difficulty Badges */
     .diff-badge {
       display: inline-block;
       padding: 0.25rem 0.75rem;
@@ -79,7 +108,6 @@
     .diff-medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
     .diff-hard { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
 
-    /* Level Stepper Dots */
     .level-dots {
       display: flex;
       gap: 0.5rem;
@@ -94,7 +122,6 @@
     .lvl-dot.done { background: #10b981; }
     .lvl-dot.active { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
 
-    /* Help & Solution Box */
     .wrong-help-box {
       display: none;
       margin-top: 1.2rem;
@@ -123,7 +150,6 @@
       font-size: 0.88rem;
       margin-top: 0.6rem;
     }
-    .btn-help:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -144,10 +170,10 @@
     <!-- 1. TOP ARENA PROGRESS BANNER -->
     <div class="arena-top-bar">
       <div style="flex: 1; min-width: 260px;">
-        <div style="font-size:0.85rem; color:#e9d5ff; font-weight:700;">TARGET ROLE: <span id="arena-dreamjob">Frontend Web Developer</span></div>
-        <h1 style="margin:0.3rem 0 0.5rem; font-size:2rem;">Progressive Coding Arena 🎮</h1>
+        <div style="font-size:0.85rem; color:#e9d5ff; font-weight:700;">TARGET ROLE: <span id="arena-dreamjob">Management Trainee Officer (MTO)</span></div>
+        <h1 style="margin:0.3rem 0 0.5rem; font-size:2rem;">Universal Skill Arena 🎮</h1>
         <p style="margin:0; color:#cbd5e1; font-size:0.95rem;">
-          Select a language to play progressive levels (<strong>Easy → Medium → Hard</strong>). Stuck on a level? Take instant guided help to learn and solve!
+          Built for <strong>BBA, Corporate, IT & All Departments</strong>. Clear progressive levels (<strong>Easy → Medium → Hard</strong>) and use guided help whenever stuck!
         </p>
       </div>
 
@@ -167,44 +193,47 @@
     <div id="active-game-stage">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1rem;">
         <div>
-          <span id="stage-lang-label" style="color:#c084fc; font-weight:800; font-size:0.9rem;">LANGUAGE TRACK</span>
+          <span id="stage-lang-label" style="color:#c084fc; font-weight:800; font-size:0.9rem;">SKILL TRACK</span>
           <h2 id="stage-level-heading" style="margin:0.2rem 0 0;">Level 1 of 3</h2>
         </div>
-        <button class="btn btn-outline" onclick="closeGameStage()">✕ Back to Languages</button>
+        <button class="btn btn-outline" onclick="closeGameStage()">✕ Back to Tracks</button>
       </div>
 
-      <!-- Level Progress Dots -->
       <div class="level-dots" id="stage-dots"></div>
-
-      <!-- Question & Options Area -->
       <div id="stage-content"></div>
 
-      <!-- Wrong Answer -> Offer Help Box -->
       <div class="wrong-help-box" id="wrong-help-box">
-        <div style="font-weight:700; color:#fca5a5;">❌ Oops! That's not the right answer for this level.</div>
+        <div style="font-weight:700; color:#fca5a5;">❌ Oops! Not quite right.</div>
         <div style="font-size:0.9rem; color:#fecaca; margin-top:0.2rem;">
-          Need a hand? You can take help on this level to see the exact solution and explanation!
+          Stuck on this scenario? Take help to see the exact solution and business/technical logic!
         </div>
         <button class="btn-help" onclick="revealHelpSolution()">💡 Take Help (Show Solution)</button>
       </div>
 
-      <!-- Revealed Solution Box -->
       <div class="solution-reveal-box" id="solution-reveal-box">
         <div style="font-weight:800; color:#34d399; margin-bottom:0.3rem;">✅ Level Solution & Explanation:</div>
         <div id="solution-text" style="font-size:0.92rem; line-height:1.5;"></div>
         <div style="font-size:0.82rem; color:#a7f3d0; margin-top:0.5rem;">
-          Now select the correct option above to clear this level and advance!
+          Now select the right answer above to advance to the next level!
         </div>
       </div>
     </div>
 
-    <!-- 3. LANGUAGE TRACKS HUB -->
-    <h2 style="margin-bottom:1.2rem;">Select a Programming Language to Play</h2>
+    <!-- 3. DEPARTMENT FILTER TABS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.8rem;">
+      <h2 style="margin:0;">Select Your Skill Track</h2>
+      <div class="filter-tabs" style="margin:0;">
+        <button class="filter-btn active" onclick="filterTracks('all', this)">All Tracks (9)</button>
+        <button class="filter-btn" onclick="filterTracks('bba', this)">BBA & Corporate (4)</button>
+        <button class="filter-btn" onclick="filterTracks('it', this)">IT & Coding (5)</button>
+      </div>
+    </div>
+
     <div class="game-hub-grid" id="game-cards-container"></div>
 
   </div>
 
-  <!-- Firebase & Progressive Level Engine -->
+  <!-- Firebase & Multi-Department Progressive Engine -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -226,197 +255,370 @@
 
     let currentUid = null;
     let userData = {};
-    let activeLangId = null;
+    let currentFilter = 'all';
 
-    // Progressive Levels (Easy -> Medium -> Hard) for Each Language
+    // 9 Tracks Covering Both BBA/Corporate & IT/CSE
     const tracksData = [
+      // --- BBA & CORPORATE TRACKS ---
+      {
+        id: "bba_mgmt",
+        category: "bba",
+        deptLabel: "BBA • Management & Strategy",
+        name: "📊 Business Strategy & MTO",
+        desc: "Master SWOT analysis, KPIs, supply chain decisions, and corporate leadership cases.",
+        roles: ["Management Trainee Officer (MTO)", "Business Development Executive"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: SWOT Analysis Fundamentals",
+            prompt: "A rival company launches a cheaper product in Dhaka. In a SWOT analysis, under which category does this fall?",
+            code: `Company Scenario:\n- Internal: Strong R&D team\n- External: New low-cost competitor entering market`,
+            options: ["Strength", "Weakness", "Opportunity", "Threat"],
+            correct: 3,
+            xp: 10,
+            solution: "<strong>Correct Answer: Threat</strong><br/>Competitors entering the market are external factors that could harm market share, making them a <strong>Threat</strong> in SWOT."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Break-Even Point Calculation",
+            prompt: "Your startup has Fixed Costs of ৳1,00,000. Each product sells for ৳500 and costs ৳300 to make. How many units must you sell to break even?",
+            code: `Fixed Cost = 100,000 BDT\nSelling Price = 500 BDT | Variable Cost = 300 BDT`,
+            options: ["200 units", "333 units", "500 units", "1,000 units"],
+            correct: 2,
+            xp: 15,
+            solution: "<strong>Correct Answer: 500 units</strong><br/>Contribution Margin per unit = 500 - 300 = ৳200. Break-Even Units = Fixed Cost (1,00,000) / 200 = <strong>500 units</strong>."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: Supply Chain Bottleneck Crisis",
+            prompt: "Customer orders jumped 40%, but warehouse dispatch is delayed by 3 days. Which KPI directly measures on-time delivery efficiency?",
+            code: `Operations Review:\nGoal -> Improve customer retention & logistics speed`,
+            options: ["ROI (Return on Investment)", "OTIF (On-Time In-Full)", "Churn Rate", "Gross Profit Margin"],
+            correct: 1,
+            xp: 20,
+            solution: "<strong>Correct Answer: OTIF (On-Time In-Full)</strong><br/>OTIF is the gold-standard supply chain KPI measuring whether orders arrive on schedule and with complete quantities."
+          }
+        ]
+      },
+      {
+        id: "bba_mkt",
+        category: "bba",
+        deptLabel: "BBA • Marketing & Branding",
+        name: "📢 Marketing & Growth",
+        desc: "Solve 4Ps branding puzzles, digital CAC/ROAS metrics, and consumer psychology challenges.",
+        roles: ["Marketing & Brand Executive", "Business Development Executive"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: The Marketing Mix (4Ps)",
+            prompt: "Deciding whether to sell a skincare product via Daraz, Shwapno outlets, or a flagship store belongs to which 'P'?",
+            code: `Marketing Mix:\n1. Product  2. Price  3. _____  4. Promotion`,
+            options: ["People", "Place (Distribution)", "Process", "Packaging"],
+            correct: 1,
+            xp: 10,
+            solution: "<strong>Correct Answer: Place (Distribution)</strong><br/><strong>Place</strong> covers the distribution channels and locations where customers access and purchase the product."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Customer Acquisition Cost (CAC)",
+            prompt: "You spent ৳50,000 on Facebook & YouTube ads in November and gained 250 paying customers. What is your CAC?",
+            code: `Total Ad Spend = 50,000 BDT\nNew Customers Acquired = 250`,
+            options: ["৳100", "৳200", "৳250", "৳500"],
+            correct: 1,
+            xp: 15,
+            solution: "<strong>Correct Answer: ৳200</strong><br/>CAC = Total Marketing Spend (৳50,000) ÷ New Customers (250) = <strong>৳200 per customer</strong>."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: A/B Testing & Conversion Funnel",
+            prompt: "10,000 users visit your landing page, 1,000 click 'Sign Up', and 150 complete registration. What is the Visitor-to-Signup Conversion Rate?",
+            code: `Landing Page Views: 10,000\nCompleted Signups: 150`,
+            options: ["15%", "10%", "1.5%", "0.15%"],
+            correct: 2,
+            xp: 20,
+            solution: "<strong>Correct Answer: 1.5%</strong><br/>Conversion Rate = (150 Completed Signups ÷ 10,000 Total Visitors) × 100 = <strong>1.5%</strong>."
+          }
+        ]
+      },
+      {
+        id: "bba_fin",
+        category: "bba",
+        deptLabel: "BBA • Finance & Banking",
+        name: "💰 Finance & Accounting",
+        desc: "Conquer balance sheets, liquidity ratios, NPV investment decisions, and banking cases.",
+        roles: ["Financial & Credit Analyst", "Management Trainee Officer (MTO)"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: The Accounting Equation",
+            prompt: "A company has Total Assets of ৳12,00,000 and Total Liabilities of ৳4,50,000. What is the Owner's Equity?",
+            code: `Assets = Liabilities + Owner's Equity`,
+            options: ["৳16,50,000", "৳7,50,000", "৳8,50,000", "৳4,50,000"],
+            correct: 1,
+            xp: 10,
+            solution: "<strong>Correct Answer: ৳7,50,000</strong><br/>Owner's Equity = Assets (12,00,000) - Liabilities (4,50,000) = <strong>৳7,50,000</strong>."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Current Ratio & Liquidity",
+            prompt: "If Current Assets = ৳6,00,000 and Current Liabilities = ৳3,00,000, what is the Current Ratio?",
+            code: `Current Ratio = Current Assets / Current Liabilities`,
+            options: ["0.5 : 1", "1.5 : 1", "2.0 : 1", "3.0 : 1"],
+            correct: 2,
+            xp: 15,
+            solution: "<strong>Correct Answer: 2.0 : 1</strong><br/>6,00,000 ÷ 3,00,000 = <strong>2.0</strong>, meaning the firm has twice as many short-term assets as short-term debts."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: Capital Budgeting (NPV Rule)",
+            prompt: "Project Alpha requires an initial investment of ৳5,00,000. Its discounted future cash inflows equal ৳5,85,000. What is the NPV and decision?",
+            code: `NPV = PV of Cash Inflows - Initial Investment`,
+            options: ["NPV = -৳85,000 (Reject)", "NPV = +৳85,000 (Accept)", "NPV = ৳5,85,000 (Accept)", "NPV = 0 (Indifferent)"],
+            correct: 1,
+            xp: 20,
+            solution: "<strong>Correct Answer: NPV = +৳85,000 (Accept)</strong><br/>NPV = 5,85,000 - 5,00,000 = <strong>+৳85,000</strong>. Whenever NPV > 0, the project adds value and should be accepted."
+          }
+        ]
+      },
+      {
+        id: "bba_hr",
+        category: "bba",
+        deptLabel: "All Depts • HR & Communication",
+        name: "🤝 HR & Corporate Soft Skills",
+        desc: "Master workplace conflict resolution, STAR interview framing, and talent retention.",
+        roles: ["HR & Talent Acquisition Executive", "Management Trainee Officer (MTO)"],
+        levels: [
+          {
+            diff: "Easy",
+            title: "Level 1: The STAR Interview Method",
+            prompt: "When answering behavioral HR questions ('Tell me about a time you solved a team conflict'), what does STAR stand for?",
+            code: `S - Situation\nT - Task\nA - ______\nR - Result`,
+            options: ["Analysis", "Action", "Assessment", "Agreement"],
+            correct: 1,
+            xp: 10,
+            solution: "<strong>Correct Answer: Action</strong><br/>STAR stands for <strong>Situation, Task, Action, Result</strong>—focusing specifically on the action YOU took to solve the challenge."
+          },
+          {
+            diff: "Medium",
+            title: "Level 2: Employee Attrition Rate",
+            prompt: "An organization started the year with 200 employees and 20 employees resigned during the year. What is the annual attrition rate?",
+            code: `Attrition Rate = (Employees Left / Average Headcount) × 100`,
+            options: ["5%", "10%", "15%", "20%"],
+            correct: 1,
+            xp: 15,
+            solution: "<strong>Correct Answer: 10%</strong><br/>(20 resignations ÷ 200 employees) × 100 = <strong>10% annual attrition</strong>."
+          },
+          {
+            diff: "Hard",
+            title: "Level 3: Workplace Conflict & Retention",
+            prompt: "Your top-performing analyst threatens to resign due to burnout and lack of growth, though salary is competitive. What is the best HR intervention?",
+            code: `Case: High performer burnout + career stagnation`,
+            options: ["Issue a formal warning letter", "Redistribute workload & create a clear promotion roadmap", "Ignore until resignation is submitted", "Offer a 2% one-time bonus only"],
+            correct: 1,
+            xp: 20,
+            solution: "<strong>Correct Answer: Redistribute workload & create a clear promotion roadmap</strong><br/>Burnout and career stagnation are solved by workload balancing and structured career progression, not short-term cash alone."
+          }
+        ]
+      },
+
+      // --- IT & CODING TRACKS ---
       {
         id: "html",
+        category: "it",
+        deptLabel: "CSE / IT • Web Structure",
         name: "🌐 HTML5",
-        desc: "Master document structure, semantic tags, forms, and accessibility from Level 1 to 3.",
+        desc: "Master semantic document structure, links, and native HTML5 form validation.",
         roles: ["Frontend Web Developer", "Full-Stack Software Engineer"],
         levels: [
           {
             diff: "Easy",
             title: "Level 1: Semantic Page Heading",
-            prompt: "Which HTML5 tag is used to define the primary, most important heading on a webpage?",
-            code: `&lt;!-- Add the main title below --&gt;\n&lt;___&gt;Welcome to Bekar Naki?&lt;/___&gt;`,
+            prompt: "Which HTML5 tag defines the primary, most important heading visible on a webpage?",
+            code: `&lt;___&gt;Welcome to Bekar Naki?&lt;/___&gt;`,
             options: ["<head>", "<h1>", "<h6>", "<title>"],
             correct: 1,
             xp: 10,
-            solution: "<strong>Correct Answer: &lt;h1&gt;</strong><br/>&lt;h1&gt; defines the top-level main heading visible on the page, whereas &lt;title&gt; sets the browser tab name inside &lt;head&gt;."
+            solution: "<strong>Correct Answer: &lt;h1&gt;</strong><br/>&lt;h1&gt; defines the primary main heading on the page."
           },
           {
             diff: "Medium",
-            title: "Level 2: Opening Links Safely in a New Tab",
-            prompt: "Which attribute combination opens a link in a new browser tab securely?",
+            title: "Level 2: Opening Links in a New Tab",
+            prompt: "Which attribute opens an anchor link in a new browser tab?",
             code: `&lt;a href="https://github.com" ______&gt;GitHub&lt;/a&gt;`,
             options: ['open="new"', 'target="_blank"', 'rel="tab"', 'href="_new"'],
             correct: 1,
             xp: 15,
-            solution: '<strong>Correct Answer: target="_blank"</strong><br/>Setting <code>target="_blank"</code> instructs the browser to open the linked URL in a brand new tab.'
+            solution: '<strong>Correct Answer: target="_blank"</strong><br/><code>target="_blank"</code> opens the URL in a new browser tab.'
           },
           {
             diff: "Hard",
-            title: "Level 3: HTML5 Form Validation Attribute",
-            prompt: "How do you enforce that an email input field cannot be submitted empty AND must match a valid email pattern natively in HTML5?",
-            code: `&lt;input type="____" name="user_email" ____ /&gt;`,
-            options: ['type="text" with validate', 'type="email" with required', 'type="mail" with mandatory', 'type="string" with check'],
+            title: "Level 3: Native HTML5 Form Validation",
+            prompt: "How do you require a valid email format and prevent empty submission natively in HTML5?",
+            code: `&lt;input type="____" ____ /&gt;`,
+            options: ['type="text" validate', 'type="email" required', 'type="mail" mandatory', 'type="string" check'],
             correct: 1,
             xp: 20,
-            solution: '<strong>Correct Answer: type="email" with required</strong><br/><code>type="email"</code> automatically checks for the <code>@</code> domain format, and the boolean <code>required</code> attribute prevents empty submission.'
+            solution: '<strong>Correct Answer: type="email" required</strong><br/><code>type="email"</code> validates email syntax and <code>required</code> blocks empty submits.'
           }
         ]
       },
       {
         id: "css",
+        category: "it",
+        deptLabel: "CSE / IT • UI & Styling",
         name: "🎨 CSS3",
-        desc: "Level up from basic color styling to Flexbox centering and responsive Grid layouts.",
+        desc: "Level up from rounded buttons to Flexbox centering and CSS Specificity.",
         roles: ["Frontend Web Developer", "Full-Stack Software Engineer"],
         levels: [
           {
             diff: "Easy",
-            title: "Level 1: Rounded Button Corners",
-            prompt: "Which CSS property turns a sharp rectangular button into a smooth pill-shaped button?",
-            code: `.btn {\n  background: purple;\n  ________: 99px;\n}`,
+            title: "Level 1: Rounded Pill Buttons",
+            prompt: "Which CSS property curves sharp corners into a pill-shaped button?",
+            code: `.btn { background: purple; ________: 99px; }`,
             options: ["corner-round", "border-radius", "box-curve", "edge-style"],
             correct: 1,
             xp: 10,
-            solution: "<strong>Correct Answer: border-radius</strong><br/><code>border-radius: 99px;</code> curves the outer corners of an element into a pill shape."
+            solution: "<strong>Correct Answer: border-radius</strong><br/><code>border-radius: 99px;</code> rounds element corners smoothly."
           },
           {
             diff: "Medium",
-            title: "Level 2: Perfect Flexbox Centering",
-            prompt: "When using <code>display: flex;</code>, which two properties center a child box both horizontally and vertically?",
-            code: `.container {\n  display: flex;\n  ________: center;\n  ________: center;\n}`,
+            title: "Level 2: Flexbox Centering",
+            prompt: "Which two Flexbox properties center an item both horizontally and vertically?",
+            code: `.box { display: flex; ________: center; ________: center; }`,
             options: ["text-align & vertical-align", "justify-content & align-items", "flex-center & box-align", "margin & padding"],
             correct: 1,
             xp: 15,
-            solution: "<strong>Correct Answer: justify-content & align-items</strong><br/><code>justify-content: center</code> centers along the main horizontal axis, while <code>align-items: center</code> centers along the vertical cross-axis."
+            solution: "<strong>Correct Answer: justify-content & align-items</strong><br/><code>justify-content</code> aligns horizontally and <code>align-items</code> aligns vertically."
           },
           {
             diff: "Hard",
             title: "Level 3: CSS Specificity Wars",
-            prompt: "An element has <code>&lt;p id='intro' class='text'&gt;Hello&lt;/p&gt;</code>. Which CSS rule wins and sets the final color?",
+            prompt: "Given <code>&lt;p id='intro' class='text'&gt;Hi&lt;/p&gt;</code>, which color wins?",
             code: `#intro { color: cyan; }\n.text { color: pink; }\np { color: yellow; }`,
-            options: ["yellow (Element selector)", "pink (Class selector)", "cyan (ID selector)", "Browser default black"],
+            options: ["yellow", "pink", "cyan", "black"],
             correct: 2,
             xp: 20,
-            solution: "<strong>Correct Answer: cyan (ID selector)</strong><br/>In CSS Specificity hierarchy, an ID selector (<code>#intro</code> = 100 points) overrides a Class selector (<code>.text</code> = 10 points) and an Element selector (<code>p</code> = 1 point)."
+            solution: "<strong>Correct Answer: cyan</strong><br/>ID selectors (<code>#intro</code>) have higher specificity than classes (<code>.text</code>) and tags (<code>p</code>)."
           }
         ]
       },
       {
         id: "js",
+        category: "it",
+        deptLabel: "CSE / IT • Web Logic",
         name: "⚡ JavaScript",
-        desc: "Conquer variables, array methods, closures, and asynchronous promises step-by-step.",
+        desc: "Conquer type coercion, array pipelines, and the asynchronous Event Loop.",
         roles: ["Frontend Web Developer", "Backend PHP / Node Developer", "Full-Stack Software Engineer"],
         levels: [
           {
             diff: "Easy",
             title: "Level 1: String + Number Coercion",
-            prompt: "What will be printed in the console when adding a string and a number?",
-            code: `let a = "10";\nlet b = 5;\nconsole.log(a + b);`,
-            options: ["15", '"105"', "NaN", "SyntaxError"],
+            prompt: "What does <code>console.log('10' + 5)</code> output?",
+            code: `let a = "10"; let b = 5; console.log(a + b);`,
+            options: ["15", '"105"', "NaN", "Error"],
             correct: 1,
             xp: 10,
-            solution: '<strong>Correct Answer: "105"</strong><br/>Because <code>a</code> is a string, the <code>+</code> operator performs string concatenation instead of math addition, producing <code>"105"</code>.'
+            solution: '<strong>Correct Answer: "105"</strong><br/>Adding a string and a number concatenates them into <code>"105"</code>.'
           },
           {
             diff: "Medium",
-            title: "Level 2: Array Filter & Map Pipeline",
-            prompt: "What is the final output of this chained array operation?",
-            code: `const arr = [1, 2, 3, 4];\nconst res = arr.filter(x => x % 2 === 0).map(x => x * 10);\nconsole.log(res[1]);`,
+            title: "Level 2: Array Filter & Map",
+            prompt: "What is the value of <code>res[1]</code>?",
+            code: `const arr = [1, 2, 3, 4];\nconst res = arr.filter(x => x % 2 === 0).map(x => x * 10);`,
             options: ["20", "30", "40", "undefined"],
             correct: 2,
             xp: 15,
-            solution: "<strong>Correct Answer: 40</strong><br/><code>filter(x => x % 2 === 0)</code> keeps even numbers <code>[2, 4]</code>. Then <code>map(x => x * 10)</code> transforms them into <code>[20, 40]</code>. Index <code>[1]</code> is <code>40</code>."
+            solution: "<strong>Correct Answer: 40</strong><br/>Even numbers <code>[2, 4]</code> become <code>[20, 40]</code>; index 1 is <code>40</code>."
           },
           {
             diff: "Hard",
             title: "Level 3: Event Loop Execution Order",
-            prompt: "In what exact order will the numbers print in the JavaScript console?",
+            prompt: "In what order do these logs appear?",
             code: `console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);`,
             options: ["1, 2, 3, 4", "1, 4, 2, 3", "1, 4, 3, 2", "1, 3, 4, 2"],
             correct: 2,
             xp: 20,
-            solution: "<strong>Correct Answer: 1, 4, 3, 2</strong><br/>Synchronous code runs first (<code>1</code>, then <code>4</code>). Next, Microtasks (<code>Promise.then</code> → <code>3</code>) always execute before Macrotasks (<code>setTimeout</code> → <code>2</code>)."
+            solution: "<strong>Correct Answer: 1, 4, 3, 2</strong><br/>Sync logs (1, 4) run first, then Microtasks (Promise -> 3), then Macrotasks (setTimeout -> 2)."
           }
         ]
       },
       {
         id: "c",
+        category: "it",
+        deptLabel: "CSE / IT • Systems & Pointers",
         name: "⚙️ C Programming",
-        desc: "Progress from basic loops to pointer arithmetic and dynamic memory allocation.",
-        roles: ["Software Engineer (C / Java)", "IT Executive / Junior Analyst"],
+        desc: "Master integer arithmetic, pointer offsets, and static memory persistence.",
+        roles: ["Software Engineer (C / Java)", "IT Executive / Junior Data Analyst"],
         levels: [
           {
             diff: "Easy",
-            title: "Level 1: Integer Division Trap",
-            prompt: "What output does this C program print?",
-            code: `int a = 7, b = 2;\nprintf("%d", a / b);`,
+            title: "Level 1: Integer Division",
+            prompt: "What does <code>printf('%d', 7 / 2);</code> output in C?",
+            code: `int a = 7, b = 2; printf("%d", a / b);`,
             options: ["3.5", "3", "4", "1"],
             correct: 1,
             xp: 10,
-            solution: "<strong>Correct Answer: 3</strong><br/>In C, dividing two integers (<code>7 / 2</code>) truncates the decimal part and returns only the integer quotient <code>3</code>."
+            solution: "<strong>Correct Answer: 3</strong><br/>Integer division truncates the decimal remainder."
           },
           {
             diff: "Medium",
             title: "Level 2: Pointer Arithmetic",
-            prompt: "If <code>ptr</code> points to the first element of <code>arr</code>, what does <code>*(ptr + 2)</code> print?",
+            prompt: "What does <code>*(ptr + 2)</code> evaluate to?",
             code: `int arr[] = {10, 25, 50, 75};\nint *ptr = arr;\nprintf("%d", *(ptr + 2));`,
             options: ["10", "25", "50", "75"],
             correct: 2,
             xp: 15,
-            solution: "<strong>Correct Answer: 50</strong><br/><code>ptr</code> starts at index 0 (<code>10</code>). Moving <code>ptr + 2</code> jumps 2 integer positions forward to index 2, whose value is <code>50</code>."
+            solution: "<strong>Correct Answer: 50</strong><br/><code>ptr + 2</code> points to index 2 of the array, which is <code>50</code>."
           },
           {
             diff: "Hard",
-            title: "Level 3: Static Variable Persistence",
-            prompt: "What will be printed when <code>counter()</code> is called three times in a row?",
-            code: `void counter() {\n  static int count = 0;\n  count++;\n  printf("%d ", count);\n}\n// main calls counter(); counter(); counter();`,
-            options: ["1 1 1", "0 1 2", "1 2 3", "Garbage value"],
+            title: "Level 3: Static Local Variables",
+            prompt: "What prints when <code>counter()</code> is called 3 times?",
+            code: `void counter() { static int c = 0; c++; printf("%d ", c); }`,
+            options: ["1 1 1", "0 1 2", "1 2 3", "Garbage"],
             correct: 2,
             xp: 20,
-            solution: "<strong>Correct Answer: 1 2 3</strong><br/>A <code>static</code> local variable in C retains its value in memory between function calls instead of resetting to 0 each time."
+            solution: "<strong>Correct Answer: 1 2 3</strong><br/><code>static</code> preserves the variable value across function calls."
           }
         ]
       },
       {
         id: "java",
+        category: "it",
+        deptLabel: "CSE / IT • Object-Oriented",
         name: "☕ Java OOP",
-        desc: "Master Java syntax, inheritance, polymorphism, and exception handling across 3 tiers.",
-        roles: ["Software Engineer (C / Java)", "Full-Stack Software Engineer", "Backend PHP / Node Developer"],
+        desc: "Master inheritance, Heap vs String Pool, and finally-block behavior.",
+        roles: ["Software Engineer (C / Java)", "Full-Stack Software Engineer"],
         levels: [
           {
             diff: "Easy",
-            title: "Level 1: Class Inheritance Keyword",
-            prompt: "Which keyword allows a <code>Developer</code> class to inherit fields and methods from a <code>Person</code> class?",
-            code: `public class Developer _______ Person {\n  // code\n}`,
+            title: "Level 1: Class Inheritance",
+            prompt: "Which keyword lets <code>Developer</code> inherit from <code>Person</code>?",
+            code: `public class Developer _______ Person { }`,
             options: ["implements", "inherits", "extends", "super"],
             correct: 2,
             xp: 10,
-            solution: "<strong>Correct Answer: extends</strong><br/>In Java, classes inherit from a superclass using <code>extends</code>, while <code>implements</code> is used for interfaces."
+            solution: "<strong>Correct Answer: extends</strong><br/>Classes inherit from another class using <code>extends</code>."
           },
           {
             diff: "Medium",
-            title: "Level 2: String Pool vs Heap Comparison",
-            prompt: "What does this Java snippet output?",
+            title: "Level 2: Heap Reference Comparison",
+            prompt: "What does <code>s1 == s2</code> print?",
             code: `String s1 = new String("Bekar");\nString s2 = new String("Bekar");\nSystem.out.println(s1 == s2);`,
-            options: ["true", "false", "Compilation Error", "null"],
+            options: ["true", "false", "Error", "null"],
             correct: 1,
             xp: 15,
-            solution: "<strong>Correct Answer: false</strong><br/>Using <code>new String()</code> creates two distinct objects in Heap memory. <code>==</code> compares memory references (which differ), whereas <code>s1.equals(s2)</code> compares actual text."
+            solution: "<strong>Correct Answer: false</strong><br/><code>new String()</code> allocates separate Heap addresses, so <code>==</code> returns <code>false</code>."
           },
           {
             diff: "Hard",
-            title: "Level 3: Try-Catch-Finally Return Override",
-            prompt: "What integer value does this method return when invoked?",
-            code: `static int test() {\n  try {\n    return 10;\n  } finally {\n    return 20;\n  }\n}`,
-            options: ["10", "20", "30", "Unreachable code error"],
+            title: "Level 3: Finally Block Override",
+            prompt: "What value does <code>test()</code> return?",
+            code: `static int test() { try { return 10; } finally { return 20; } }`,
+            options: ["10", "20", "30", "Compile Error"],
             correct: 1,
             xp: 20,
-            solution: "<strong>Correct Answer: 20</strong><br/>In Java, the <code>finally</code> block always executes before a method exits—so a <code>return 20</code> inside <code>finally</code> overrides the earlier <code>return 10</code>."
+            solution: "<strong>Correct Answer: 20</strong><br/>The <code>finally</code> block executes last and overrides the <code>try</code> return value."
           }
         ]
       }
@@ -435,10 +637,17 @@
       }
     });
 
+    window.filterTracks = function(category, btnEl) {
+      currentFilter = category;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      renderArenaHub();
+    };
+
     function renderArenaHub() {
-      const dreamJob = userData.dreamJob || "Frontend Web Developer";
+      const dreamJob = userData.dreamJob || "Management Trainee Officer (MTO)";
       const overallLevel = userData.level || 0;
-      const langLevels = userData.langLevels || {}; // e.g., { html: 1, css: 0, ... }
+      const langLevels = userData.langLevels || {};
 
       document.getElementById('arena-dreamjob').innerText = dreamJob;
       document.getElementById('arena-level-num').innerText = overallLevel;
@@ -447,9 +656,11 @@
       const container = document.getElementById('game-cards-container');
       container.innerHTML = "";
 
-      tracksData.forEach(track => {
+      const filteredTracks = tracksData.filter(t => currentFilter === 'all' || t.category === currentFilter);
+
+      filteredTracks.forEach(track => {
         const isRec = track.roles.includes(dreamJob);
-        const completedCount = langLevels[track.id] || 0; // 0, 1, 2, or 3
+        const completedCount = langLevels[track.id] || 0;
         const totalLevels = track.levels.length;
         const isMastered = completedCount >= totalLevels;
 
@@ -457,7 +668,8 @@
           <div class="lang-game-card">
             ${isRec ? `<div class="rec-tag">★ Recommended</div>` : ``}
             <div>
-              <div style="font-size:1.35rem; font-weight:800; margin-bottom:0.4rem;">${track.name}</div>
+              <div class="dept-tag">${track.deptLabel}</div>
+              <div style="font-size:1.3rem; font-weight:800; margin-bottom:0.4rem;">${track.name}</div>
               <p style="color:#cbd5e1; font-size:0.9rem; margin:0 0 1.2rem;">${track.desc}</p>
             </div>
             <div>
@@ -477,17 +689,11 @@
       });
     }
 
-    // Open Progressive Level Stage for Selected Language
     window.openLanguageTrack = function(langId) {
-      activeLangId = langId;
       const track = tracksData.find(t => t.id === langId);
       const langLevels = userData.langLevels || {};
       let currentLvlIdx = langLevels[langId] || 0;
-
-      // If all 3 levels done, allow replaying from Level 1 (index 0)
-      if (currentLvlIdx >= track.levels.length) {
-        currentLvlIdx = 0;
-      }
+      if (currentLvlIdx >= track.levels.length) currentLvlIdx = 0;
 
       renderLevelQuestion(track, currentLvlIdx);
 
@@ -500,14 +706,12 @@
       const qData = track.levels[lvlIdx];
       const completedCount = (userData.langLevels || {})[track.id] || 0;
 
-      // Hide previous help/solution boxes
       document.getElementById('wrong-help-box').style.display = "none";
       document.getElementById('solution-reveal-box').style.display = "none";
 
-      document.getElementById('stage-lang-label').innerText = `${track.name} TRACK`;
+      document.getElementById('stage-lang-label').innerText = `${track.deptLabel} • ${track.name}`;
       document.getElementById('stage-level-heading').innerText = `${qData.title} (+${qData.xp} XP)`;
 
-      // Render Stepper Dots
       const dotsEl = document.getElementById('stage-dots');
       dotsEl.innerHTML = track.levels.map((_, idx) => {
         let cls = "lvl-dot";
@@ -516,12 +720,10 @@
         return `<div class="${cls}"></div>`;
       }).join("");
 
-      // Difficulty badge class
       let diffClass = "diff-easy";
       if (qData.diff === "Medium") diffClass = "diff-medium";
       if (qData.diff === "Hard") diffClass = "diff-hard";
 
-      // Render Question & Options
       const contentEl = document.getElementById('stage-content');
       contentEl.innerHTML = `
         <span class="diff-badge ${diffClass}">Difficulty: ${qData.diff}</span>
@@ -536,34 +738,28 @@
         </div>
       `;
 
-      // Pre-load explanation text for the Help button
       document.getElementById('solution-text').innerHTML = qData.solution;
     }
 
-    // Reveal Help Solution when user clicks "Take Help"
     window.revealHelpSolution = function() {
       document.getElementById('solution-reveal-box').style.display = "block";
     };
 
-    // Check Answer & Progress to Next Level
     window.submitLevelAnswer = async function(langId, lvlIdx, chosenIdx) {
       const track = tracksData.find(t => t.id === langId);
       const qData = track.levels[lvlIdx];
 
       if (chosenIdx !== qData.correct) {
-        // Show "Take Help" prompt box below
         const helpBox = document.getElementById('wrong-help-box');
         helpBox.style.display = "block";
         helpBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
         return;
       }
 
-      // Correct Answer! Update Firebase Progress
       const langLevels = userData.langLevels || {};
       const prevCompleted = langLevels[langId] || 0;
       let newOverallLevel = userData.level || 0;
 
-      // Only award new XP if clearing this level for the first time
       if (lvlIdx + 1 > prevCompleted) {
         langLevels[langId] = lvlIdx + 1;
         newOverallLevel = Math.min(100, newOverallLevel + qData.xp);
@@ -582,7 +778,6 @@
 
       renderArenaHub();
 
-      // Advance to next level automatically or celebrate track completion
       if (lvlIdx + 1 < track.levels.length) {
         alert(`🎉 Level ${lvlIdx + 1} Cleared! +${qData.xp} XP Synced!\nAdvancing to Level ${lvlIdx + 2} (${track.levels[lvlIdx + 1].diff})...`);
         renderLevelQuestion(track, lvlIdx + 1);
@@ -596,7 +791,6 @@
       document.getElementById('active-game-stage').style.display = "none";
     };
 
-    // Logout
     document.getElementById('logout-btn').addEventListener('click', async () => {
       await signOut(auth);
       window.location.href = "index.html";
