@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Crack & Mock Exam | Bekar Naki? 🧲</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .int-hero {
+      background: linear-gradient(135deg, rgba(131, 24, 67, 0.8), rgba(49, 16, 99, 0.9));
+      border: 1px solid rgba(244, 114, 182, 0.4);
+      border-radius: 18px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Interview Crack Tips Grid */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.1rem;
+      margin-bottom: 2.2rem;
+    }
+    .tip-card {
+      background: rgba(22, 14, 48, 0.85);
+      border: 1px solid var(--border);
+      border-left: 4px solid #f472b6;
+      border-radius: 12px;
+      padding: 1.2rem;
+    }
+    .tip-card h4 {
+      margin: 0 0 0.4rem;
+      color: #f9a8d4;
+      font-size: 0.98rem;
+    }
+    .tip-card p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* Sector Selector Cards */
+    .sector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.4rem;
+      margin-bottom: 2.5rem;
+    }
+    .sector-card {
+      background: rgba(22, 14, 48, 0.92);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 1.7rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .sector-card:hover {
+      transform: translateY(-5px);
+      border-color: #c084fc;
+    }
+
+    /* Active 25-MCQ Exam Stage */
+    #exam-stage {
+      display: none;
+      background: rgba(15, 9, 36, 0.97);
+      border: 2px solid #a855f7;
+      border-radius: 20px;
+      padding: 2.2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+    .exam-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .q-counter-pill {
+      background: rgba(139, 92, 246, 0.25);
+      border: 1px solid #a855f7;
+      color: #e9d5ff;
+      padding: 0.35rem 0.9rem;
+      border-radius: 99px;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+    .score-pill {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      padding: 0.35rem 0.9rem;
+      border-radius: 99px;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    /* Option Styling */
+    .mcq-opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: rgba(30, 20, 62, 0.9);
+      border: 1.5px solid var(--border);
+      color: #f8fafc;
+      padding: 0.95rem 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      font-size: 0.96rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .mcq-opt:hover:not(:disabled) {
+      border-color: #c084fc;
+      background: rgba(88, 28, 135, 0.45);
+    }
+    .mcq-opt.correct-opt {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10b981 !important;
+      color: #6ee7b7 !important;
+      font-weight: 700;
+    }
+    .mcq-opt.wrong-opt {
+      background: rgba(239, 68, 68, 0.22) !important;
+      border-color: #ef4444 !important;
+      color: #fca5a5 !important;
+    }
+
+    /* Help & Explanation Box */
+    .help-explain-box {
+      display: none;
+      margin-top: 1.1rem;
+      padding: 1.1rem 1.3rem;
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid #f59e0b;
+      border-radius: 12px;
+      color: #fef3c7;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+    .btn-take-help {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      border: none;
+      padding: 0.65rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <a href="index.html" class="logo">Bekar <span>Naki?</span> 🧲</a>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="cvmaker.html">CV Maker 📄</a>
+      <a href="arena.html">Skill Arena 🎮</a>
+      <a href="jobs.html">Job Match 🏢</a>
+      <a href="interview.html" class="active">Interview Prep 🎯</a>
+      <button id="logout-btn" class="btn btn-danger">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. HERO BANNER -->
+    <div class="int-hero">
+      <div style="font-size:0.82rem; color:#f9a8d4; font-weight:800; letter-spacing:0.5px;">INTERVIEW CRACK SIMULATOR</div>
+      <h1 style="margin:0.3rem 0 0.5rem; font-size:2.1rem;">Crack Any Job Interview with Confidence 🎯</h1>
+      <p style="margin:0; color:#e2e8f0; max-width:720px; font-size:0.96rem;">
+        Master proven interview strategies and test yourself with a <strong>25-Question Sector MCQ Exam</strong>. Stuck on any question? Click <strong>Take Help</strong> to get an instant step-by-step explanation!
+      </p>
+    </div>
+
+    <!-- 2. GOLDEN INTERVIEW CRACK TIPS -->
+    <h2 style="margin-bottom:1rem;">🔥 4 Golden Rules to Crack Interview Boards</h2>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <h4>1. Master the STAR Formula</h4>
+        <p>For situational questions, structure answers using <strong>Situation → Task → Action → Result</strong> with measurable numbers.</p>
+      </div>
+      <div class="tip-card">
+        <h4>2. Research the Company First</h4>
+        <p>Know the company's latest product, competitors, and mission before walking in—recruiters love prepared candidates.</p>
+      </div>
+      <div class="tip-card">
+        <h4>3. Own Your CV Projects</h4>
+        <p>Be ready to explain every single line, GPA, project, or skill listed on your CV in under 60 seconds clearly.</p>
+      </div>
+      <div class="tip-card">
+        <h4>4. Ask a Smart Closing Question</h4>
+        <p>When asked <em>"Do you have any questions?"</em>, ask about team KPIs or growth paths in the first 90 days.</p>
+      </div>
+    </div>
+
+    <!-- 3. ACTIVE 25-MCQ EXAM STAGE -->
+    <div id="exam-stage">
+      <div class="exam-header-bar">
+        <div>
+          <span id="exam-sector-badge" style="color:#c084fc; font-weight:800; font-size:0.85rem;">SECTOR EXAM</span>
+          <h2 id="exam-q-title" style="margin:0.2rem 0 0; font-size:1.3rem;">Question 1 of 25</h2>
+        </div>
+        <div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">
+          <span class="q-counter-pill" id="q-progress-pill">1 / 25</span>
+          <span class="score-pill">Score: <span id="live-score">0</span></span>
+          <button class="btn btn-outline" style="padding:0.45rem 0.9rem; font-size:0.85rem;" onclick="exitExam()">✕ Exit Exam</button>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-bar" style="height:8px; margin-bottom:1.5rem;">
+        <div class="progress-fill" id="exam-progress-bar" style="width:4%;"></div>
+      </div>
+
+      <!-- Question Body -->
+      <div id="mcq-question-area"></div>
+
+      <!-- Action & Take Help Controls -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-top:1.2rem;">
+        <button class="btn-take-help" id="take-help-btn" onclick="showQuestionHelp()">
+          💡 Take Help (Explain Answer)
+        </button>
+        <button class="btn btn-green" id="next-q-btn" style="display:none;" onclick="nextQuestion()">
+          Next Question →
+        </button>
+      </div>
+
+      <!-- Guided Explanation Box -->
+      <div class="help-explain-box" id="help-explain-box"></div>
+    </div>
+
+    <!-- 4. SELECT INTERVIEW SECTOR (25 MCQs EACH) -->
+    <div id="sector-selection-area">
+      <h2 style="margin-bottom:1rem;">📝 Choose Your Interview Sector (25 MCQs Each)</h2>
+      <div class="sector-grid">
+        
+        <div class="sector-card">
+          <div>
+            <div style="font-size:2.2rem; margin-bottom:0.6rem;">📊💼</div>
+            <h3 style="margin:0 0 0.4rem;">BBA, Corporate & Banking</h3>
+            <p style="color:#cbd5e1; font-size:0.9rem;">
+              25 real MTO, Banking, Marketing, Finance, Accounting, and Supply Chain interview MCQs with full explanations.
+            </p>
+          </div>
+          <button class="btn" style="width:100%; margin-top:1rem;" onclick="startMockExam('bba')">
+            Start 25-MCQ Exam →
+          </button>
+        </div>
+
+        <div class="sector-card">
+          <div>
+            <div style="font-size:2.2rem; margin-bottom:0.6rem;">💻⚡</div>
+            <h3 style="margin:0 0 0.4rem;">IT & Software Engineering</h3>
+            <p style="color:#cbd5e1; font-size:0.9rem;">
+              25 technical interview MCQs covering HTML, CSS, JavaScript, C Pointers, Java OOP, SQL, and Git.
+            </p>
+          </div>
+          <button class="btn" style="width:100%; margin-top:1rem;" onclick="startMockExam('it')">
+            Start 25-MCQ Exam →
+          </button>
+        </div>
+
+        <div class="sector-card">
+          <div>
+            <div style="font-size:2.2rem; margin-bottom:0.6rem;">🧠🤝</div>
+            <h3 style="margin:0 0 0.4rem;">General Aptitude, IQ & HR</h3>
+            <p style="color:#cbd5e1; font-size:0.9rem;">
+              25 universal screening MCQs on Logical Reasoning, Percentage Math, Workplace Ethics, and HR Psychology.
+            </p>
+          </div>
+          <button class="btn" style="width:100%; margin-top:1rem;" onclick="startMockExam('general')">
+            Start 25-MCQ Exam →
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Firebase & 75-Question Interview Bank (25 per Sector) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
+      authDomain: "bekar-naki.firebaseapp.com",
+      projectId: "bekar-naki",
+      storageBucket: "bekar-naki.firebasestorage.app",
+      messagingSenderId: "720723215856",
+      appId: "1:720723215856:web:7deb0f660050f140720935",
+      measurementId: "G-1VVJZHJ9NM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUid = null;
+    let userData = {};
+
+    // 25 Questions per Sector = 75 Total Curated Interview MCQs
+    const questionBank = {
+      bba: [
+        { q: "1. What does 'ROI' stand for in business finance?", opts: ["Rate of Inflation", "Return on Investment", "Risk of Inventory", "Revenue on Income"], ans: 1, exp: "ROI (Return on Investment) measures the net profit gained relative to the total cost of an investment." },
+        { q: "2. In SWOT analysis, which two factors are internal to the organization?", opts: ["Strengths & Weaknesses", "Opportunities & Threats", "Strengths & Opportunities", "Weaknesses & Threats"], ans: 0, exp: "Strengths and Weaknesses are internal attributes inside the company's control; Opportunities and Threats are external." },
+        { q: "3. Which financial statement shows a company's Assets, Liabilities, and Equity at a specific date?", opts: ["Income Statement", "Cash Flow Statement", "Balance Sheet", "Trial Balance"], ans: 2, exp: "The Balance Sheet provides a snapshot of Assets = Liabilities + Owner's Equity on a given date." },
+        { q: "4. What are the classic 4Ps of Marketing?", opts: ["Product, Price, Place, Promotion", "People, Process, Profit, Plan", "Price, Packaging, Public, Policy", "Product, People, Place, Profit"], ans: 0, exp: "McCarthy's 4Ps are Product, Price, Place (distribution), and Promotion." },
+        { q: "5. If Fixed Cost = ৳60,000, Selling Price = ৳400, Variable Cost = ৳250, what is the Break-Even Point?", opts: ["200 units", "300 units", "400 units", "600 units"], ans: 2, exp: "Contribution per unit = 400 - 250 = ৳150. Break-Even = 60,000 / 150 = 400 units." },
+        { q: "6. What does 'KPI' stand for in corporate performance management?", opts: ["Key Process Integration", "Key Performance Indicator", "Knowledge Planning Index", "Known Profit Income"], ans: 1, exp: "KPI stands for Key Performance Indicator—measurable values showing how effectively goals are achieved." },
+        { q: "7. Which ratio measures a company's ability to pay short-term obligations within one year?", opts: ["Debt-to-Equity Ratio", "Current Ratio", "Gross Margin Ratio", "Dividend Yield"], ans: 1, exp: "Current Ratio (Current Assets ÷ Current Liabilities) evaluates short-term liquidity." },
+        { q: "8. In Bangladesh, which institution regulates commercial banks?", opts: ["BSEC", "Bangladesh Bank", "NBR", "FBCCI"], ans: 1, exp: "Bangladesh Bank is the central bank and primary regulator of all scheduled commercial banks." },
+        { q: "9. What does 'B2B' stand for in e-commerce like ShopUp?", opts: ["Back to Basics", "Business to Business", "Brand to Buyer", "Bank to Business"], ans: 1, exp: "B2B (Business-to-Business) refers to commerce transactions between businesses (e.g., wholesalers and retailers)." },
+        { q: "10. What is 'CAC' in digital marketing?", opts: ["Customer Acquisition Cost", "Corporate Asset Control", "Client Account Credit", "Consumer Ad Clicks"], ans: 0, exp: "CAC is the total sales and marketing cost required to acquire one new paying customer." },
+        { q: "11. Which leadership style gives employees high autonomy to make decisions?", opts: ["Autocratic", "Laissez-Faire (Delegative)", "Bureaucratic", "Transactional"], ans: 1, exp: "Laissez-Faire leadership empowers skilled team members to self-manage and make independent decisions." },
+        { q: "12. When NPV (Net Present Value) of a project is greater than zero, the firm should:", opts: ["Reject the project", "Accept the project", "Delay for 5 years", "Increase debt only"], ans: 1, exp: "A positive NPV means projected earnings exceed costs in today's value, increasing shareholder wealth." },
+        { q: "13. What does 'FMCG' stand for (e.g., Unilever, Marico)?", opts: ["Fast-Moving Consumer Goods", "Financial Market Credit Group", "Fixed Manufacturing Cost Goods", "First Market Corporate Growth"], ans: 0, exp: "FMCG products are everyday items sold quickly at relatively low cost (soap, tea, snacks)." },
+        { q: "14. Which HR metric measures the percentage of employees leaving a company over a period?", opts: ["Onboarding Rate", "Attrition / Turnover Rate", "Absenteeism Index", "Productivity Yield"], ans: 1, exp: "Employee Attrition (or Turnover) Rate tracks the rate at which staff leave an organization." },
+        { q: "15. What is 'USP' in brand positioning?", opts: ["Universal Sales Plan", "Unique Selling Proposition", "Unit Service Price", "User Satisfaction Policy"], ans: 1, exp: "USP is the unique benefit that makes a product stand out from competitors." },
+        { q: "16. In Supply Chain Management, what does 'JIT' stand for?", opts: ["Job In Time", "Just-In-Time", "Joint Inventory Transfer", "Junior Inspection Team"], ans: 1, exp: "Just-In-Time (JIT) inventory minimizes storage costs by receiving goods only as they are needed." },
+        { q: "17. Which Excel function looks up a value vertically in the first column of a table?", opts: ["SUMIF", "VLOOKUP", "COUNTIF", "CONCATENATE"], ans: 1, exp: "VLOOKUP (Vertical Lookup) searches down the first column of a range and returns a corresponding value." },
+        { q: "18. What is 'Gross Profit'?", opts: ["Revenue minus Operating Expenses", "Revenue minus Cost of Goods Sold (COGS)", "Net Income plus Taxes", "Total Assets minus Liabilities"], ans: 1, exp: "Gross Profit = Total Sales Revenue - Direct Cost of Goods Sold (COGS)." },
+        { q: "19. What does 'CSR' stand for in corporate governance?", opts: ["Customer Sales Ratio", "Corporate Social Responsibility", "Credit Security Reserve", "Central Supply Resource"], ans: 1, exp: "CSR refers to a company's ethical initiatives benefiting society and the environment." },
+        { q: "20. A market dominated by a small number of large firms (e.g., Telecom in BD) is called:", opts: ["Monopoly", "Oligopoly", "Perfect Competition", "Monopsony"], ans: 1, exp: "An Oligopoly exists when a few large firms hold the majority of market share." },
+        { q: "21. What is 'Churn Rate' in subscription or telecom businesses?", opts: ["New signups per day", "Percentage of customers who stop using the service", "Profit per user", "Ad click rate"], ans: 1, exp: "Churn rate measures customer loss over a given timeframe." },
+        { q: "22. Which document outlines a job's specific duties, responsibilities, and reporting line?", opts: ["Job Specification", "Job Description (JD)", "Offer Letter", "Appraisal Form"], ans: 1, exp: "A Job Description (JD) defines day-to-day duties, whereas Job Specification lists candidate qualifications." },
+        { q: "23. What does 'MVP' mean in startup product management?", opts: ["Most Valuable Player", "Minimum Viable Product", "Market Volume Projection", "Maximum Value Price"], ans: 1, exp: "An MVP is the simplest functional version of a product launched to test real user feedback quickly." },
+        { q: "24. Depreciation is applied to which type of assets?", opts: ["Current Cash", "Tangible Fixed Assets (Machinery, Vehicles)", "Inventory", "Accounts Receivable"], ans: 1, exp: "Depreciation allocates the cost of tangible fixed assets over their useful life." },
+        { q: "25. In an MTO interview, if asked 'Why should we hire you?', the strongest approach is:", opts: ["Saying you urgently need money", "Aligning your verified skills & achievements directly with the role's needs", "Criticizing other candidates", "Reciting your entire family history"], ans: 1, exp: "Recruiters want proof of how your specific skills and problem-solving mindset will create value for their team." }
+      ],
+
+      it: [
+        { q: "1. What does 'DOM' stand for in web development?", opts: ["Data Object Model", "Document Object Model", "Digital Ordinance Mode", "Display Output Module"], ans: 1, exp: "The DOM represents an HTML document as a tree of objects that JavaScript can dynamically manipulate." },
+        { q: "2. Which HTTP status code indicates 'Not Found'?", opts: ["200", "301", "404", "500"], ans: 2, exp: "404 means the server could not find the requested resource; 200 is OK, and 500 is Internal Server Error." },
+        { q: "3. In JavaScript, what is the difference between '==' and '==='?", opts: ["No difference", "'===' checks both value and data type", "'==' is faster", "'===' only compares strings"], ans: 1, exp: "Strict equality (===) checks value AND type without type coercion (e.g., 5 === '5' is false)." },
+        { q: "4. Which CSS property creates space INSIDE an element's border?", opts: ["margin", "padding", "gap", "spacing"], ans: 1, exp: "Padding adds inner space between content and border; margin adds outer space outside the border." },
+        { q: "5. In C programming, which operator gets the memory address of a variable?", opts: ["*", "&", "#", "@"], ans: 1, exp: "The address-of operator (&) returns the memory address, while (*) dereferences a pointer." },
+        { q: "6. Which OOP pillar allows a child class to provide a specific implementation of a parent method?", opts: ["Encapsulation", "Polymorphism (Method Overriding)", "Abstraction", "Compilation"], ans: 1, exp: "Runtime polymorphism (method overriding) lets subclasses redefine inherited methods." },
+        { q: "7. What is the time complexity of Binary Search on a sorted array?", opts: ["O(n)", "O(log n)", "O(n²)", "O(1)"], ans: 1, exp: "Binary Search halves the search space at each step, resulting in O(log n) logarithmic time." },
+        { q: "8. Which SQL command is used to retrieve data from a database table?", opts: ["GET", "SELECT", "FETCH", "EXTRACT"], ans: 1, exp: "SELECT is the standard SQL query command to read rows from tables." },
+        { q: "9. In Git, which command uploads local committed changes to a remote GitHub repository?", opts: ["git pull", "git push", "git commit", "git clone"], ans: 1, exp: "git push transfers local commits to the remote branch on GitHub." },
+        { q: "10. Which HTML5 tag is best for standalone navigation links?", opts: ["<nav>", "<section>", "<aside>", "<header>"], ans: 0, exp: "<nav> semantically defines major navigation link blocks." },
+        { q: "11. What does 'API' stand for?", opts: ["Application Programming Interface", "Automated Program Integration", "Applied Protocol Index", "Advanced Page Interaction"], ans: 0, exp: "An API defines rules allowing different software applications to communicate." },
+        { q: "12. Which data structure operates on FIFO (First-In, First-Out)?", opts: ["Stack", "Queue", "Binary Tree", "Graph"], ans: 1, exp: "A Queue processes elements in First-In, First-Out order (like a ticket line); Stack is LIFO." },
+        { q: "13. In Java, which keyword prevents a variable from being reassigned?", opts: ["static", "final", "const", "abstract"], ans: 1, exp: "In Java, 'final' makes a variable a constant that cannot be modified after initialization." },
+        { q: "14. Which CSS layout system is two-dimensional (rows AND columns simultaneously)?", opts: ["Flexbox", "CSS Grid", "Float", "Inline-Block"], ans: 1, exp: "CSS Grid handles 2D layouts (rows and columns together), whereas Flexbox is primarily 1D." },
+        { q: "15. What does 'CRUD' stand for in database & backend apps?", opts: ["Create, Read, Update, Delete", "Copy, Run, Undo, Deploy", "Connect, Render, Upload, Download", "Code, Review, Unit-test, Debug"], ans: 0, exp: "CRUD represents the four basic persistent storage operations." },
+        { q: "16. In JavaScript, which method converts a JSON string into a JS object?", opts: ["JSON.stringify()", "JSON.parse()", "JSON.object()", "JSON.decode()"], ans: 1, exp: "JSON.parse() parses a JSON string into an object; JSON.stringify() does the reverse." },
+        { q: "17. What is a Primary Key in a relational database?", opts: ["Any duplicate column", "A unique identifier for each record in a table", "A password hash", "An external file link"], ans: 1, exp: "A Primary Key uniquely identifies every row and cannot contain NULL values." },
+        { q: "18. Which C function dynamically allocates memory on the heap?", opts: ["printf()", "malloc()", "scanf()", "sizeof()"], ans: 1, exp: "malloc() (memory allocation) reserves requested bytes in Heap memory at runtime." },
+        { q: "19. What is Cross-Site Scripting (XSS)?", opts: ["A CSS animation bug", "Injecting malicious scripts into trusted websites", "A database backup tool", "A faster JS compiler"], ans: 1, exp: "XSS occurs when untrusted user input executes malicious JavaScript in another user's browser." },
+        { q: "20. In responsive web design, what do '@media' queries do?", opts: ["Play audio files", "Apply CSS styles based on screen width/device", "Compress images", "Connect to Firebase"], ans: 1, exp: "Media queries adapt layouts to mobile, tablet, and desktop screen sizes." },
+        { q: "21. Which keyword is used to handle exceptions in Java & JavaScript?", opts: ["catch / try", "error / fix", "throw / stop", "check / rescue"], ans: 0, exp: "try { ... } catch (err) { ... } catches and handles runtime errors gracefully." },
+        { q: "22. What does 'HTTPS' add over standard 'HTTP'?", opts: ["Faster video streaming", "SSL/TLS encryption for secure data transfer", "Larger font sizes", "Free domain hosting"], ans: 1, exp: "HTTPS encrypts communication between browser and server using TLS/SSL." },
+        { q: "23. Which JavaScript array method creates a new array by transforming every element?", opts: ["forEach()", "map()", "filter()", "reduce()"], ans: 1, exp: "map() returns a brand-new array containing the results of calling a function on every element." },
+        { q: "24. What is 'NoSQL' (like Firebase Firestore)?", opts: ["A database that stores non-tabular data (documents/key-value)", "A database with zero security", "A SQL syntax checker", "An offline text file"], ans: 0, exp: "Firestore is a NoSQL document database storing data in flexible collections and JSON-like documents." },
+        { q: "25. In a technical interview, if you don't know the exact syntax for a problem, you should:", opts: ["Stay completely silent", "Explain your step-by-step logic and pseudocode clearly", "Make up fake library names", "End the interview immediately"], ans: 1, exp: "Interviewers evaluate problem-solving approach and logical clarity far more than memorized syntax." }
+      ],
+
+      general: [
+        { q: "1. If a shirt costs ৳1,200 after a 20% discount, what was its original price?", opts: ["৳1,440", "৳1,500", "৳1,400", "৳1,600"], ans: 1, exp: "80% of Original Price = 1,200 → Original Price = 1,200 ÷ 0.80 = ৳1,500." },
+        { q: "2. Find the next number in the series: 2, 6, 12, 20, 30, ?", opts: ["36", "40", "42", "44"], ans: 2, exp: "Differences increase by 2 each time: +4, +6, +8, +10, so next is 30 + 12 = 42." },
+        { q: "3. If 5 machines take 5 minutes to make 5 widgets, how long do 100 machines take to make 100 widgets?", opts: ["100 minutes", "5 minutes", "20 minutes", "
