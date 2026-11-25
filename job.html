@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Company & Job Match | Bekar Naki? 🧲</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .job-hero {
+      background: linear-gradient(135deg, rgba(49, 16, 99, 0.85), rgba(15, 23, 42, 0.92));
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      border-radius: 18px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .skill-pill {
+      display: inline-block;
+      background: rgba(139, 92, 246, 0.25);
+      border: 1px solid #a855f7;
+      color: #f3e8ff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0.2rem 0.2rem 0 0;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 0.7rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: rgba(22, 14, 48, 0.85);
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.55rem 1.2rem;
+      border-radius: 99px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: linear-gradient(135deg, #7c3aed, #db2777);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    /* Job & Company Match Cards */
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .company-card {
+      background: rgba(22, 14, 48, 0.9);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .company-card:hover {
+      transform: translateY(-5px);
+      border-color: #38bdf8;
+    }
+    .match-badge {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.1rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+    .match-high {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid #10b981;
+    }
+    .match-good {
+      background: rgba(56, 189, 248, 0.2);
+      color: #7dd3fc;
+      border: 1px solid #38bdf8;
+    }
+    .company-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0.3rem 0 0.2rem;
+    }
+    .post-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #f472b6;
+      margin-bottom: 0.8rem;
+    }
+    .req-skill-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      font-size: 0.76rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      margin: 0.15rem 0.2rem 0 0;
+    }
+    .req-skill-tag.matched {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #6ee7b7;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <a href="index.html" class="logo">Bekar <span>Naki?</span> 🧲</a>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="cvmaker.html">CV Maker 📄</a>
+      <a href="arena.html">Skill Arena 🎮</a>
+      <a href="jobs.html" class="active">Job Match 🏢</a>
+      <button id="logout-btn" class="btn btn-danger">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. USER SKILL PROFILE SUMMARY -->
+    <div class="job-hero">
+      <div style="flex:1; min-width:260px;">
+        <div style="font-size:0.82rem; color:#38bdf8; font-weight:800; letter-spacing:0.5px;">AI CAREER MATCHMAKER</div>
+        <h1 style="margin:0.3rem 0 0.5rem; font-size:2rem;">Recommended Companies & Posts 🏢</h1>
+        <p style="margin:0 0 0.8rem; color:#cbd5e1; font-size:0.95rem;">
+          Based on your target role (<strong id="job-target-role" style="color:#f472b6;">Loading...</strong>) and listed skills, here are top companies & roles where you can apply:
+        </p>
+        <div id="user-skills-summary"></div>
+      </div>
+
+      <div style="text-align:right;">
+        <a href="cvmaker.html" class="btn btn-outline" style="margin-bottom:0.5rem; display:inline-block;">+ Add More Skills in CV</a>
+        <div style="font-size:0.82rem; color:var(--text-muted);">More skills = Higher Company Match %</div>
+      </div>
+    </div>
+
+    <!-- 2. SECTOR FILTER TABS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:0.8rem;">
+      <h2 style="margin:0;">Curated Hiring Opportunities</h2>
+      <div class="filter-tabs" style="margin:0;">
+        <button class="filter-btn active" onclick="filterJobs('recommended', this)">★ Best Matches For You</button>
+        <button class="filter-btn" onclick="filterJobs('all', this)">All Sectors (10)</button>
+        <button class="filter-btn" onclick="filterJobs('bba', this)">BBA & Corporate</button>
+        <button class="filter-btn" onclick="filterJobs('it', this)">IT & Software</button>
+      </div>
+    </div>
+
+    <!-- 3. COMPANY & POST CARDS -->
+    <div class="jobs-grid" id="jobs-container"></div>
+
+  </div>
+
+  <!-- Firebase & Smart Skill-Matching Engine -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR3_EeUc15xDI-2QUxym0wTMyco9hJfjA",
+      authDomain: "bekar-naki.firebaseapp.com",
+      projectId: "bekar-naki",
+      storageBucket: "bekar-naki.firebasestorage.app",
+      messagingSenderId: "720723215856",
+      appId: "1:720723215856:web:7deb0f660050f140720935",
+      measurementId: "G-1VVJZHJ9NM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let userData = {};
+    let currentFilter = 'recommended';
+
+    // Curated Database of Top Companies & Job Posts (Bangladesh & Global)
+    const opportunities = [
+      // --- BBA & CORPORATE ---
+      {
+        company: "Unilever Bangladesh",
+        sector: "FMCG & Multinational",
+        category: "bba",
+        post: "Management Trainee Officer (UFLP)",
+        location: "Dhaka, Bangladesh",
+        minLevel: 20,
+        reqSkills: ["Leadership", "Marketing", "Business Strategy", "Communication", "Excel", "Problem Solving"],
+        tip: "Highlight leadership club activities and case competition achievements on your CV."
+      },
+      {
+        company: "bKash Limited",
+        sector: "FinTech & Digital Banking",
+        category: "bba",
+        post: "Business Development & Growth Executive",
+        location: "Dhaka, Bangladesh",
+        minLevel: 15,
+        reqSkills: ["Marketing", "Sales", "Communication", "Data Analysis", "Negotiation", "Excel"],
+        tip: "Emphasize merchant acquisition ideas, analytical thinking, and customer empathy."
+      },
+      {
+        company: "BRAC Bank PLC",
+        sector: "Banking & Finance",
+        category: "bba",
+        post: "Young Leaders / Credit Risk Analyst",
+        location: "Dhaka / Nationwide",
+        minLevel: 20,
+        reqSkills: ["Finance", "Accounting", "Excel", "Financial Analysis", "Communication", "Risk Management"],
+        tip: "Strong grasp of financial ratios, SME banking, and clean academic grades stand out."
+      },
+      {
+        company: "Grameenphone Ltd.",
+        sector: "Telecom & Digital Services",
+        category: "bba",
+        post: "Brand & Digital Marketing Executive",
+        location: "Bashundhara, Dhaka",
+        minLevel: 15,
+        reqSkills: ["Marketing", "Branding", "Digital Marketing", "Content Strategy", "Analytics", "Communication"],
+        tip: "Showcase campaign metrics (CAC, ROAS) and digital consumer behavior insights."
+      },
+      {
+        company: "ShopUp",
+        sector: "B2B Commerce & Logistics",
+        category: "bba",
+        post: "Operations & Supply Chain Associate",
+        location: "Dhaka, Bangladesh",
+        minLevel: 10,
+        reqSkills: ["Operations", "Supply Chain", "Excel", "Management", "Problem Solving", "Teamwork"],
+        tip: "Focus on logistics optimization, fast execution, and spreadsheet reporting skills."
+      },
+
+      // --- IT & SOFTWARE ---
+      {
+        company: "Brain Station 23",
+        sector: "Software & IT Services",
+        category: "it",
+        post: "Junior Frontend / Full-Stack Developer",
+        location: "Mohakhali, Dhaka",
+        minLevel: 20,
+        reqSkills: ["HTML", "CSS", "JavaScript", "React", "Git", "Problem Solving"],
+        tip: "Attach live GitHub repository links and responsive web projects on your CV."
+      },
+      {
+        company: "Enosis Solutions",
+        sector: "Enterprise Software",
+        category: "it",
+        post: "Associate Software Engineer (C / Java / JS)",
+        location: "Gulshan, Dhaka",
+        minLevel: 25,
+        reqSkills: ["C", "C Programming", "Java", "OOP", "Data Structures", "JavaScript", "SQL"],
+        tip: "Strong fundamentals in OOP, pointers/memory, and clean code structure are tested."
+      },
+      {
+        company: "Chaldal Engineering",
+        sector: "E-Commerce & Tech",
+        category: "it",
+        post: "Junior Web & Backend Engineer",
+        location: "Dhaka, Bangladesh",
+        minLevel: 20,
+        reqSkills: ["JavaScript", "HTML", "CSS", "PHP", "Node.js", "Database", "Firebase"],
+        tip: "Demonstrate full-stack CRUD projects and real-time database integration."
+      },
+      {
+        company: "Pathao Tech",
+        sector: "Ride-Sharing & Logistics Tech",
+        category: "it",
+        post: "Junior QA & Software Analyst",
+        location: "Banani, Dhaka",
+        minLevel: 10,
+        reqSkills: ["Testing", "JavaScript", "HTML", "CSS", "SQL", "Problem Solving", "Communication"],
+        tip: "Detail bug-tracking accuracy, edge-case thinking, and API basics."
+      },
+      {
+        company: "Robi Axiata Limited",
+        sector: "Telecom & Data Analytics",
+        category: "it",
+        post: "IT & Junior Data Analyst",
+        location: "Gulshan, Dhaka",
+        minLevel: 15,
+        reqSkills: ["Python", "SQL", "Excel", "Data Analysis", "Java", "Problem Solving"],
+        tip: "Combine technical querying skills with clear business storytelling."
+      }
+    ];
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      const docSnap = await getDoc(doc(db, "users", user.uid));
+      if (docSnap.exists()) {
+        userData = docSnap.data();
+        renderHeaderSummary();
+        renderJobCards();
+      }
+    });
+
+    function renderHeaderSummary() {
+      document.getElementById('job-target-role').innerText = userData.dreamJob || "Not Set";
+      const skills = userData.skills || [];
+      const box = document.getElementById('user-skills-summary');
+
+      if (skills.length > 0) {
+        box.innerHTML = `<span style="font-size:0.82rem; color:var(--text-muted); margin-right:0.4rem;">Your Active Skills:</span>` +
+          skills.map(s => `<span class="skill-pill">${s}</span>`).join("");
+      } else {
+        box.innerHTML = `<span style="color:#fbbf24; font-size:0.88rem;">⚠️ You haven't added any skills yet! Add your skills in CV Maker for personalized matching.</span>`;
+      }
+    }
+
+    window.filterJobs = function(mode, btnEl) {
+      currentFilter = mode;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      renderJobCards();
+    };
+
+    function renderJobCards() {
+      const userSkillsLower = (userData.skills || []).map(s => s.toLowerCase());
+      const dreamJob = (userData.dreamJob || "").toLowerCase();
+      const isUserIT = dreamJob.includes("developer") || dreamJob.includes("software") || dreamJob.includes("it");
+
+      // Score each job opportunity against user's skills & target role
+      const scoredJobs = opportunities.map(job => {
+        let matchedCount = 0;
+        job.reqSkills.forEach(req => {
+          if (userSkillsLower.some(us => us.includes(req.toLowerCase()) || req.toLowerCase().includes(us))) {
+            matchedCount++;
+          }
+        });
+
+        const categoryBonus = (isUserIT && job.category === 'it') || (!isUserIT && job.category === 'bba') ? 25 : 0;
+        const skillScore = Math.round((matchedCount / job.reqSkills.length) * 75);
+        const totalMatch = Math.min(98, Math.max(35, skillScore + categoryBonus));
+
+        return { ...job, matchedCount, totalMatch };
+      });
+
+      // Sort highest match first
+      scoredJobs.sort((a, b) => b.totalMatch - a.totalMatch);
+
+      let displayed = scoredJobs;
+      if (currentFilter === 'recommended') {
+        displayed = scoredJobs.slice(0, 6);
+      } else if (currentFilter === 'bba') {
+        displayed = scoredJobs.filter(j => j.category === 'bba');
+      } else if (currentFilter === 'it') {
+        displayed = scoredJobs.filter(j => j.category === 'it');
+      }
+
+      const container = document.getElementById('jobs-container');
+      container.innerHTML = "";
+
+      displayed.forEach(job => {
+        const badgeClass = job.totalMatch >= 65 ? "match-high" : "match-good";
+
+        const skillsHtml = job.reqSkills.map(req => {
+          const isMatched = userSkillsLower.some(us => us.includes(req.toLowerCase()) || req.toLowerCase().includes(us));
+          return `<span class="req-skill-tag ${isMatched ? 'matched' : ''}">${isMatched ? '✓ ' : ''}${req}</span>`;
+        }).join("");
+
+        container.innerHTML += `
+          <div class="company-card">
+            <div class="match-badge ${badgeClass}">${job.totalMatch}% Profile Match</div>
+            <div>
+              <div style="font-size:0.78rem; color:#94a3b8; font-weight:700;">${job.sector} • 📍 ${job.location}</div>
+              <div class="company-name">${job.company}</div>
+              <div class="post-title">💼 ${job.post}</div>
+
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.35rem;">Key Required Skills:</div>
+              <div style="margin-bottom:1rem;">${skillsHtml}</div>
+            </div>
+
+            <div>
+              <div style="background:rgba(9,5,20,0.65); border-left:3px solid #a855f7; padding:0.65rem 0.8rem; border-radius:6px; font-size:0.82rem; color:#e2e8f0; margin-bottom:1rem;">
+                💡 <strong>Hiring Tip:</strong> ${job.tip}
+              </div>
+              <div style="display:flex; gap:0.6rem;">
+                <a href="cvmaker.html" class="btn" style="flex:1; text-align:center; padding:0.6rem; font-size:0.88rem;">Tailor CV for Role</a>
+                <a href="interview.html" class="btn btn-outline" style="padding:0.6rem 0.9rem; font-size:0.88rem;">Prep Quiz →</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+
+</body>
+</html>
